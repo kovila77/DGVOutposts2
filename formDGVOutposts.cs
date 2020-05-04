@@ -50,16 +50,6 @@ namespace DGVOutposts
             tabControl1.TabPages[1].Tag = dgvMissions;
         }
 
-        private bool IsEntireRowEmpty(DataGridViewRow row)
-        {
-            foreach (DataGridViewCell cell in row.Cells)
-            {
-                if (string.IsNullOrEmpty(cell.FormattedValue.ToString().Trim()))
-                    return false;
-            }
-            return true;
-        }
-
         //private void OffColumnSortingDGV(DataGridView dgv) { foreach (DataGridViewColumn column in dgv.Columns) column.SortMode = DataGridViewColumnSortMode.NotSortable; }
 
         private void InitializeDGVMissions()

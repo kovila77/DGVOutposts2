@@ -85,6 +85,15 @@ namespace DGVOutposts
             oldCellValue = dgvOutposts[e.ColumnIndex, e.RowIndex].Value;
         }
 
+        private void dgvOutposts_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
+        {
+            if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
+            {
+                e.Value = e.Value.ToString().RmvExtrSpaces();
+                e.ParsingApplied = true;
+            }
+        }
+
         private void dgvOutposts_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             if (dgvOutposts.Rows[e.RowIndex].IsNewRow
@@ -93,22 +102,25 @@ namespace DGVOutposts
             // Проверка на пустоту и попытка распаристь значение ячейки
             var row = dgvOutposts.Rows[e.RowIndex];
             var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
+            var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
             //if (dgvOutposts.Columns[e.ColumnIndex].CellType == typeof(DataGridViewComboBoxCell))
             //{
             //    return;
             //}
             int t;
-            if (cell.FormattedValue.ToString().RmvSpaces() == "")
+            if (cellFormatedValue == "")
             {
                 //dgvOutposts.CancelEdit();
-                cell.Value = oldCellValue;
-                if (IsEntireRowEmpty(row))
+                if (MyHelper.IsEntireRowEmpty(row))
                     dgvOutposts.Rows.Remove(row);
                 else
+                {
                     cell.ErrorText = strEmptyCell;
+                    cell.Value = oldCellValue;
+                }
                 return;
             }
-            else if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cell.FormattedValue.ToString().Trim(), out t))
+            else if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
             {
                 //dgvOutposts.CancelEdit();
                 //cell.Value = oldCellValue==null?DBNull.Value:oldCellValue;
@@ -125,7 +137,6 @@ namespace DGVOutposts
                 //if (!dgvOutposts.IsCurrentRowDirty || dgvOutposts.Rows[e.RowIndex].IsNewRow) return;
             }
 
-
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {
                                                    row.Cells[strOutpostName],
@@ -134,19 +145,19 @@ namespace DGVOutposts
                                                    row.Cells[strOutpostCoordinateY],
                                                    row.Cells[strOutpostCoordinateZ],
                                                  };
-            foreach (var cellMaybeError in cellsWithPotentialErrors)
+            foreach (var cellWithPotentialError in cellsWithPotentialErrors)
             {
-                if (string.IsNullOrEmpty(cellMaybeError.FormattedValue.ToString().Trim()))
+                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "")
                 {
-                    cellMaybeError.ErrorText = strEmptyCell;
+                    cellWithPotentialError.ErrorText = strEmptyCell;
                     row.ErrorText = strBadRow;
                 }
                 else
                 {
-                    cellMaybeError.ErrorText = "";
+                    cellWithPotentialError.ErrorText = "";
                 }
             }
-            if (cellsWithPotentialErrors.FirstOrDefault(cellMaybeError => cellMaybeError.ErrorText.Length > 0) == null)
+            if (cellsWithPotentialErrors.FirstOrDefault(cellWithPotentialError => cellWithPotentialError.ErrorText.Length > 0) == null)
                 row.ErrorText = "";
             else
                 return;
@@ -156,15 +167,15 @@ namespace DGVOutposts
             {
                 if (!curRow.IsNewRow
                     && curRow.Index != row.Index
-                    && curRow.Cells[strOutpostName].Value.ToString().Trim() == row.Cells[strOutpostName].Value.ToString().Trim()
+                    && curRow.Cells[strOutpostName].FormattedValue.ToString().RmvExtrSpaces() == row.Cells[strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
                     && (int)curRow.Cells[strOutpostCoordinateX].Value == (int)row.Cells[strOutpostCoordinateX].Value
                     && (int)curRow.Cells[strOutpostCoordinateY].Value == (int)row.Cells[strOutpostCoordinateY].Value
                     && (int)curRow.Cells[strOutpostCoordinateZ].Value == (int)row.Cells[strOutpostCoordinateZ].Value)
                 {
                     //dgvOutposts.CancelEdit();
-                    MessageBox.Show($"Форпост {curRow.Cells[strOutpostName].Value.ToString().Trim()} с координатами {(int)curRow.Cells[strOutpostCoordinateX].Value};{(int)curRow.Cells[strOutpostCoordinateY].Value};{(int)curRow.Cells[strOutpostCoordinateZ].Value} уже существует!");
+                    MessageBox.Show($"Форпост {curRow.Cells[strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[strOutpostCoordinateX].Value};{(int)curRow.Cells[strOutpostCoordinateY].Value};{(int)curRow.Cells[strOutpostCoordinateZ].Value} уже существует!");
                     row.Cells[e.ColumnIndex].Value = oldCellValue;
-                    if (oldCellValue == null || string.IsNullOrEmpty(oldCellValue.ToString().Trim()))
+                    if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
                     {
                         cell.ErrorText = strEmptyCell;
                         row.ErrorText = strBadRow;
@@ -334,7 +345,7 @@ namespace DGVOutposts
             {
                 //var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
                 //cell.Value = dgvOutposts[e.ColumnIndex, e.RowIndex].FormattedValue;
-                dgvOutposts.CancelEdit();
+                //dgvOutposts.CancelEdit();
                 e.Cancel = false;
                 return;
             }
@@ -370,5 +381,17 @@ namespace DGVOutposts
                 }
             }
         }
+
+        //private void InitializeComponent()
+        //{
+        //    this.SuspendLayout();
+        //    // 
+        //    // formDGVOutposts
+        //    // 
+        //    this.ClientSize = new System.Drawing.Size(266, 230);
+        //    this.Name = "formDGVOutposts";
+        //    this.ResumeLayout(false);
+
+        //}
     }
 }

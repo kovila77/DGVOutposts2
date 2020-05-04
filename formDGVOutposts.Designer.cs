@@ -102,6 +102,7 @@
             this.dgvOutposts.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvOutposts_CellBeginEdit);
             this.dgvOutposts.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellEndEdit);
             this.dgvOutposts.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellLeave);
+            this.dgvOutposts.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvOutposts_CellParsing);
             this.dgvOutposts.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellValueChanged);
             this.dgvOutposts.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvOutposts_DataError);
             this.dgvOutposts.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvOutposts_UserDeletingRow);
