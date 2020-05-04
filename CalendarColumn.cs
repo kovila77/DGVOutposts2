@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -55,16 +56,28 @@ namespace DGVOutposts
             // Use the default row value when Value property is null.
             try
             {
-                if (this.Value == DBNull.Value)
+                //if (this.Value == null)
+                // {
+                //  ctl.Value = (DateTime)this.DefaultNewRowValue;
+                //  ctl.Value = DateTime.Now;
+                //  this.Value = ctl.Value;
+                //}
+                // else
+                //{
+                //ctl.Value = (DateTime)this.Value; 
+                if (this.Value == null)
                 {
-                    //  ctl.Value = (DateTime)this.DefaultNewRowValue;
                     ctl.Value = DateTime.Now;
                     this.Value = ctl.Value;
+                    //this.DataGridView.CurrentCell.Value = ctl.Value;
+                    //this.DataGridView.NotifyCurrentCellDirty(true);
+                    //this.DataGridView.NotifyCurrentCellDirty(true);
                 }
                 else
                 {
-                    ctl.Value = (DateTime)this.Value; this.Value = ctl.Value;
+                    ctl.Value = (DateTime)this.Value;
                 }
+                //}
             }
             catch
             { }
@@ -94,9 +107,10 @@ namespace DGVOutposts
             get
             {
                 // Use the current date and time as the default value.
-               // return DateTime.Now;
+                // return DateTime.Now;
                 //return null;
-                return DBNull.Value;
+                return null;
+                //return DBNull.Value;
             }
         }
     }
@@ -110,6 +124,10 @@ namespace DGVOutposts
         public CalendarEditingControl()
         {
             this.Format = DateTimePickerFormat.Short;
+            //this.EditingControlValueChanged = true;
+            //this.OnValueChanged(new EventArgs());
+
+            //valueChanged = true;
         }
 
         // Implements the IDataGridViewEditingControl.EditingControlFormattedValue 
@@ -147,6 +165,7 @@ namespace DGVOutposts
             DataGridViewDataErrorContexts context)
         {
             return EditingControlFormattedValue;
+            //return this.Value == null ? "" : EditingControlFormattedValue;
         }
 
         // Implements the 

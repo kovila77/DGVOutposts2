@@ -13,23 +13,7 @@ namespace DGVOutposts
     {
         //private DataTable dtOutposts;
         //private DataTable _dtOutposts = null;
-        private readonly string strEmptyCell = "Вы ничего не ввели!";
-        private readonly string strOnlyIntCell = "Вы ввели некорректное число!";
-        //private readonly string strUncorrectValueCell = "Некорректное значение!";
-        private readonly string strBadRow = "Плохая строка!";
-        //private readonly string strExistingOutpostRow = "Форпост уже существует!";
-        private readonly string strOutpostId = "outpost_id";
-        private readonly string strOutpostName = "outpost_name";
-        private readonly string strOutpostEconomicValue = "outpost_economic_value";
-        private readonly string strOutpostCoordinateX = "outpost_coordinate_x";
-        private readonly string strOutpostCoordinateY = "outpost_coordinate_y";
-        private readonly string strOutpostCoordinateZ = "outpost_coordinate_z";
-
-        private readonly string strMissionId = "mission_id";
-        private readonly string strMissionDescription = "mission_description";
-        private readonly string strDateBegin = "date_begin";
-        private readonly string strDatePlanEnd = "date_plan_end";
-        private readonly string strDateActualEnd = "date_actual_end";
+        
         
         //private bool rowCanBeCommitedDGVOutpost;
 

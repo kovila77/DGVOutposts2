@@ -18,27 +18,27 @@ namespace DGVOutposts
             dgvMissions.Columns.Clear();
             dgvMissions.DefaultCellStyle.NullValue = null;
 
-            dgvMissions.Columns.Add(strMissionDescription, "Описание миссии");
-            dgvMissions.Columns.Add(strMissionId, "id");
+            dgvMissions.Columns.Add(MyHelper.strMissionDescription, "Описание миссии");
+            dgvMissions.Columns.Add(MyHelper.strMissionId, "id");
             dgvMissions.Columns.Add(_comboBoxColumnOutpost);
-            dgvMissions.Columns.Add(new CalendarColumn { Name = strDateBegin, HeaderText = "Дата начала" });
-            dgvMissions.Columns.Add(new CalendarColumn { Name = strDatePlanEnd, HeaderText = "Планируемое завершение" });
-            dgvMissions.Columns.Add(new CalendarColumn { Name = strDateActualEnd, HeaderText = "Реальное завершение", ContextMenuStrip = contextMenuStripNULL });
+            dgvMissions.Columns.Add(new CalendarColumn { Name = MyHelper.strDateBegin, HeaderText = "Дата начала" });
+            dgvMissions.Columns.Add(new CalendarColumn { Name = MyHelper.strDatePlanEnd, HeaderText = "Планируемое завершение" });
+            dgvMissions.Columns.Add(new CalendarColumn { Name = MyHelper.strDateActualEnd, HeaderText = "Реальное завершение", ContextMenuStrip = contextMenuStripNULL });
 
-            dgvMissions.Columns[strMissionDescription].ValueType = typeof(string);
-            dgvMissions.Columns[strOutpostId].ValueType = typeof(int);
-            dgvMissions.Columns[strDateBegin].ValueType = typeof(DateTime);
-            dgvMissions.Columns[strDatePlanEnd].ValueType = typeof(DateTime);
-            dgvMissions.Columns[strDateActualEnd].ValueType = typeof(DateTime);
-            dgvMissions.Columns[strMissionId].ValueType = typeof(int);
+            dgvMissions.Columns[MyHelper.strMissionDescription].ValueType = typeof(string);
+            dgvMissions.Columns[MyHelper.strOutpostId].ValueType = typeof(int);
+            dgvMissions.Columns[MyHelper.strDateBegin].ValueType = typeof(DateTime);
+            dgvMissions.Columns[MyHelper.strDatePlanEnd].ValueType = typeof(DateTime);
+            dgvMissions.Columns[MyHelper.strDateActualEnd].ValueType = typeof(DateTime);
+            dgvMissions.Columns[MyHelper.strMissionId].ValueType = typeof(int);
 
 
-            dgvMissions.Columns[strMissionId].Visible = false;
+            dgvMissions.Columns[MyHelper.strMissionId].Visible = false;
 
-            dgvMissions.Columns[strOutpostId].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgvMissions.Columns[strDateBegin].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgvMissions.Columns[strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgvMissions.Columns[strDateActualEnd].SortMode = DataGridViewColumnSortMode.Automatic;
+            dgvMissions.Columns[MyHelper.strOutpostId].SortMode = DataGridViewColumnSortMode.Automatic;
+            dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Automatic;
+            dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Automatic;
+            dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.NotSortable;
 
             using (var sConn = new NpgsqlConnection(sConnStr))
             {

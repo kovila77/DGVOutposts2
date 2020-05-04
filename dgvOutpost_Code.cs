@@ -12,26 +12,27 @@ namespace DGVOutposts
     {
         private void InitializeDGVOutposts()
         {
+            //_comboBoxColumnOutpost.Clear();
             _comboBoxColumnOutpost.InitializeDataTableOutpost();
 
             dgvOutposts.Rows.Clear();
             dgvOutposts.Columns.Clear();
             dgvOutposts.DefaultCellStyle.NullValue = null;
 
-            dgvOutposts.Columns.Add(strOutpostName, "Название");
-            dgvOutposts.Columns.Add(strOutpostEconomicValue, "Экономическая ценность");
-            dgvOutposts.Columns.Add(strOutpostCoordinateX, "Координата x");
-            dgvOutposts.Columns.Add(strOutpostCoordinateY, "Координата y");
-            dgvOutposts.Columns.Add(strOutpostCoordinateZ, "Координата z");
-            dgvOutposts.Columns.Add(strOutpostId, "id");
+            dgvOutposts.Columns.Add(MyHelper.strOutpostName, "Название");
+            dgvOutposts.Columns.Add(MyHelper.strOutpostEconomicValue, "Экономическая ценность");
+            dgvOutposts.Columns.Add(MyHelper.strOutpostCoordinateX, "Координата x");
+            dgvOutposts.Columns.Add(MyHelper.strOutpostCoordinateY, "Координата y");
+            dgvOutposts.Columns.Add(MyHelper.strOutpostCoordinateZ, "Координата z");
+            dgvOutposts.Columns.Add(MyHelper.strOutpostId, "id");
 
-            dgvOutposts.Columns[strOutpostName].ValueType = typeof(string);
-            dgvOutposts.Columns[strOutpostEconomicValue].ValueType = typeof(int);
-            dgvOutposts.Columns[strOutpostCoordinateX].ValueType = typeof(int);
-            dgvOutposts.Columns[strOutpostCoordinateY].ValueType = typeof(int);
-            dgvOutposts.Columns[strOutpostCoordinateZ].ValueType = typeof(int);
+            dgvOutposts.Columns[MyHelper.strOutpostName].ValueType = typeof(string);
+            dgvOutposts.Columns[MyHelper.strOutpostEconomicValue].ValueType = typeof(int);
+            dgvOutposts.Columns[MyHelper.strOutpostCoordinateX].ValueType = typeof(int);
+            dgvOutposts.Columns[MyHelper.strOutpostCoordinateY].ValueType = typeof(int);
+            dgvOutposts.Columns[MyHelper.strOutpostCoordinateZ].ValueType = typeof(int);
 
-            dgvOutposts.Columns[strOutpostId].Visible = false;
+            dgvOutposts.Columns[MyHelper.strOutpostId].Visible = false;
 
             using (var sConn = new NpgsqlConnection(sConnStr))
             {
@@ -117,7 +118,7 @@ namespace DGVOutposts
                     dgvOutposts.Rows.Remove(row);
                 else
                 {
-                    cell.ErrorText = strEmptyCell;
+                    cell.ErrorText = MyHelper.strEmptyCell;
                     cell.Value = oldCellValue;
                 }
                 return;
@@ -130,7 +131,7 @@ namespace DGVOutposts
                 //if (IsEmptyRow(row))
                 //    dgvOutposts.Rows.Remove(row);
                 //else
-                cell.ErrorText = strOnlyIntCell;
+                cell.ErrorText = MyHelper.strOnlyIntCell;
                 return;
             }
             else
@@ -141,18 +142,18 @@ namespace DGVOutposts
 
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {
-                                                   row.Cells[strOutpostName],
-                                                   row.Cells[strOutpostEconomicValue],
-                                                   row.Cells[strOutpostCoordinateX],
-                                                   row.Cells[strOutpostCoordinateY],
-                                                   row.Cells[strOutpostCoordinateZ],
+                                                   row.Cells[MyHelper.strOutpostName],
+                                                   row.Cells[MyHelper.strOutpostEconomicValue],
+                                                   row.Cells[MyHelper.strOutpostCoordinateX],
+                                                   row.Cells[MyHelper.strOutpostCoordinateY],
+                                                   row.Cells[MyHelper.strOutpostCoordinateZ],
                                                  };
             foreach (var cellWithPotentialError in cellsWithPotentialErrors)
             {
                 if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "")
                 {
-                    cellWithPotentialError.ErrorText = strEmptyCell;
-                    row.ErrorText = strBadRow;
+                    cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
+                    row.ErrorText = MyHelper.strBadRow;
                 }
                 else
                 {
@@ -169,18 +170,22 @@ namespace DGVOutposts
             {
                 if (!curRow.IsNewRow
                     && curRow.Index != row.Index
-                    && curRow.Cells[strOutpostName].FormattedValue.ToString().RmvExtrSpaces() == row.Cells[strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-                    && (int)curRow.Cells[strOutpostCoordinateX].Value == (int)row.Cells[strOutpostCoordinateX].Value
-                    && (int)curRow.Cells[strOutpostCoordinateY].Value == (int)row.Cells[strOutpostCoordinateY].Value
-                    && (int)curRow.Cells[strOutpostCoordinateZ].Value == (int)row.Cells[strOutpostCoordinateZ].Value)
+                    && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces() 
+                        == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value 
+                        == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
+                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value 
+                        == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
+                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value 
+                        == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
                 {
                     //dgvOutposts.CancelEdit();
-                    MessageBox.Show($"Форпост {curRow.Cells[strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[strOutpostCoordinateX].Value};{(int)curRow.Cells[strOutpostCoordinateY].Value};{(int)curRow.Cells[strOutpostCoordinateZ].Value} уже существует!");
+                    MessageBox.Show($"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!");
                     row.Cells[e.ColumnIndex].Value = oldCellValue;
                     if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
                     {
-                        cell.ErrorText = strEmptyCell;
-                        row.ErrorText = strBadRow;
+                        cell.ErrorText = MyHelper.strEmptyCell;
+                        row.ErrorText = MyHelper.strBadRow;
                     }
                     //row.ErrorText = strExistingOutpostRow;
                     return;
@@ -194,12 +199,12 @@ namespace DGVOutposts
                 {
                     Connection = sConn
                 };
-                sCommand.Parameters.AddWithValue("outpost_name", row.Cells[strOutpostName].Value.ToString());
-                sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[strOutpostEconomicValue].Value);
-                sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[strOutpostCoordinateX].Value);
-                sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[strOutpostCoordinateY].Value);
-                sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[strOutpostCoordinateZ].Value);
-                if (row.Cells[strOutpostId].FormattedValue.ToString().Trim().Length > 0)
+                sCommand.Parameters.AddWithValue("outpost_name", row.Cells[MyHelper.strOutpostName].Value.ToString());
+                sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[MyHelper.strOutpostEconomicValue].Value);
+                sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[MyHelper.strOutpostCoordinateX].Value);
+                sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[MyHelper.strOutpostCoordinateY].Value);
+                sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+                if (row.Cells[MyHelper.strOutpostId].FormattedValue.ToString().Trim().Length > 0)
                 {
                     sCommand.CommandText = @"
                             UPDATE outposts
@@ -209,13 +214,13 @@ namespace DGVOutposts
                                 outpost_coordinate_y   = @outpost_coordinate_y,
                                 outpost_coordinate_z   = @outpost_coordinate_z
                             WHERE outpost_id = @outpost_id;";
-                    sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[strOutpostId].Value);
+                    sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[MyHelper.strOutpostId].Value);
                     sCommand.ExecuteNonQuery();
-                    _comboBoxColumnOutpost.Change((int)row.Cells[strOutpostId].Value,
-                                                row.Cells[strOutpostName].Value.ToString(),
-                                                (int)row.Cells[strOutpostCoordinateX].Value,
-                                                (int)row.Cells[strOutpostCoordinateY].Value,
-                                                (int)row.Cells[strOutpostCoordinateZ].Value);
+                    _comboBoxColumnOutpost.Change((int)row.Cells[MyHelper.strOutpostId].Value,
+                                                row.Cells[MyHelper.strOutpostName].Value.ToString(),
+                                                (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
+                                                (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
+                                                (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
                 }
                 else
                 {
@@ -231,12 +236,12 @@ namespace DGVOutposts
                                     @outpost_coordinate_y,
                                     @outpost_coordinate_z)
                             RETURNING outpost_id;";
-                    row.Cells["outpost_id"].Value = sCommand.ExecuteScalar();
-                    _comboBoxColumnOutpost.Add((int)row.Cells[strOutpostId].Value,
-                                                row.Cells[strOutpostName].Value.ToString(),
-                                                (int)row.Cells[strOutpostCoordinateX].Value,
-                                                (int)row.Cells[strOutpostCoordinateY].Value,
-                                                (int)row.Cells[strOutpostCoordinateZ].Value);
+                    row.Cells[MyHelper.strOutpostId].Value = sCommand.ExecuteScalar();
+                    _comboBoxColumnOutpost.Add((int)row.Cells[MyHelper.strOutpostId].Value,
+                                                row.Cells[MyHelper.strOutpostName].Value.ToString(),
+                                                (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
+                                                (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
+                                                (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
                 }
             }
         }
@@ -355,9 +360,9 @@ namespace DGVOutposts
 
         private void dgvOutposts_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (!(e.Row.Cells[strOutpostId].Value is null) /*&& e.row.cells["id"].value != dbnull.value*/)
+            if (!(e.Row.Cells[MyHelper.strOutpostId].Value is null) /*&& e.row.cells["id"].value != dbnull.value*/)
             {
-                var outpost_id = (int)e.Row.Cells[strOutpostId].Value;
+                var outpost_id = (int)e.Row.Cells[MyHelper.strOutpostId].Value;
                 //DataGridViewCell cell;
                 //for (int i = 0; i < dgvmissions.rows.count - 1; i++)
                 //{

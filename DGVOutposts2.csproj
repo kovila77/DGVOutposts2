@@ -90,7 +90,7 @@
     <Compile Include="dgvOutpost_Code.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExtraMethods.cs" />
+    <Compile Include="MyHelper.cs" />
     <Compile Include="formDGVOutposts.cs">
       <SubType>Form</SubType>
     </Compile>
