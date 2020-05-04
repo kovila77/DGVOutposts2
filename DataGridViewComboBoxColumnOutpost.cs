@@ -73,5 +73,10 @@ namespace DGVOutposts
                 _dtOutposts.Rows.Remove(forDel);
             }
         }
+
+        //public void Clear()
+        //{
+        //    _dtOutposts.Clear();
+        //}
     }
 }

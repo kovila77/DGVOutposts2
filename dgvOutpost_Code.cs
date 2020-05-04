@@ -13,23 +13,25 @@ namespace DGVOutposts
         private void InitializeDGVOutposts()
         {
             _comboBoxColumnOutpost.InitializeDataTableOutpost();
-            dgvOutposts.DefaultCellStyle.NullValue = null;
-
 
             dgvOutposts.Rows.Clear();
             dgvOutposts.Columns.Clear();
+            dgvOutposts.DefaultCellStyle.NullValue = null;
+
             dgvOutposts.Columns.Add(strOutpostName, "Название");
             dgvOutposts.Columns.Add(strOutpostEconomicValue, "Экономическая ценность");
             dgvOutposts.Columns.Add(strOutpostCoordinateX, "Координата x");
             dgvOutposts.Columns.Add(strOutpostCoordinateY, "Координата y");
             dgvOutposts.Columns.Add(strOutpostCoordinateZ, "Координата z");
-            dgvOutposts.Columns[dgvOutposts.Columns.Add("outpost_id", "id")].Visible = false;
+            dgvOutposts.Columns.Add(strOutpostId, "id");
 
             dgvOutposts.Columns[strOutpostName].ValueType = typeof(string);
             dgvOutposts.Columns[strOutpostEconomicValue].ValueType = typeof(int);
             dgvOutposts.Columns[strOutpostCoordinateX].ValueType = typeof(int);
             dgvOutposts.Columns[strOutpostCoordinateY].ValueType = typeof(int);
             dgvOutposts.Columns[strOutpostCoordinateZ].ValueType = typeof(int);
+
+            dgvOutposts.Columns[strOutpostId].Visible = false;
 
             using (var sConn = new NpgsqlConnection(sConnStr))
             {

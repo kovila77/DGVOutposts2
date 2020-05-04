@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpOutposts = new System.Windows.Forms.TabPage();
             this.dgvOutposts = new System.Windows.Forms.DataGridView();
@@ -85,15 +85,15 @@
             // 
             this.dgvOutposts.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvOutposts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.NullValue = "DBNull.Value";
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvOutposts.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.NullValue = "DBNull.Value";
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvOutposts.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvOutposts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvOutposts.Location = new System.Drawing.Point(3, 3);
             this.dgvOutposts.Name = "dgvOutposts";
@@ -101,13 +101,10 @@
             this.dgvOutposts.TabIndex = 0;
             this.dgvOutposts.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvOutposts_CellBeginEdit);
             this.dgvOutposts.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellEndEdit);
-            this.dgvOutposts.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellLeave);
             this.dgvOutposts.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvOutposts_CellParsing);
             this.dgvOutposts.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellValueChanged);
             this.dgvOutposts.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvOutposts_DataError);
             this.dgvOutposts.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvOutposts_UserDeletingRow);
-            this.dgvOutposts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvOutposts_KeyDown);
-            this.dgvOutposts.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.dgvOutposts_PreviewKeyDown);
             // 
             // tpMissions
             // 
@@ -129,9 +126,9 @@
             this.dgvMissions.Name = "dgvMissions";
             this.dgvMissions.Size = new System.Drawing.Size(786, 394);
             this.dgvMissions.TabIndex = 0;
+            this.dgvMissions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellEndEdit);
             this.dgvMissions.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellMouseEnter);
-            this.dgvMissions.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_RowValidated);
-            this.dgvMissions.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMissions_RowValidating);
+            this.dgvMissions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvMissions_CellParsing);
             this.dgvMissions.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvMissions_UserDeletingRow);
             // 
             // contextMenuStripNULL
