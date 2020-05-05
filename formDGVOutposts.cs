@@ -21,6 +21,8 @@ namespace DGVOutposts
         private object oldCellValue;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
+        private delegate void RowCheck(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e);
+
         private readonly string sConnStr = new NpgsqlConnectionStringBuilder
         {
             Host = Database.Default.Host,
@@ -33,6 +35,8 @@ namespace DGVOutposts
         public formDGVOutposts()
         {
             InitializeComponent();
+            dgvOutposts.Tag = new RowCheck(dgvOutposts_RowChecking);
+            //dgvOutposts.Tag = new RowCheck(dgvOutposts_RowChecking);
             InitializeDGVOutposts();
             InitializeDGVMissions();
             //OffColumnSortingDGV(dgvOutposts);
@@ -128,7 +132,8 @@ namespace DGVOutposts
             }
             else
             {
-                cell.ErrorText = "";                
+                cell.ErrorText = "";
+                ((RowCheck)dgv.Tag).Invoke(cell, ref e);
             }
         }
 
