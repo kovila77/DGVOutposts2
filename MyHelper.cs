@@ -10,8 +10,8 @@ namespace DGVOutposts
 {
     public static class MyHelper
     {
-        public static readonly string strEmptyCell = "Вы ничего не ввели!";
-        public static readonly string strOnlyIntCell = "Вы ввели некорректное число!";
+        public static readonly string strEmptyCell = "Вы ввели пустое значение!";
+        public static readonly string strUncorrectIntValueCell = "Вы ввели некорректное число!";
         //public static readonly string strUncorrectValueCell = "Некорректное значение!";
         public static readonly string strBadRow = "Плохая строка!";
         //public static readonly string strExistingOutpostRow = "Форпост уже существует!";

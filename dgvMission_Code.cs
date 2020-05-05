@@ -75,18 +75,41 @@ namespace DGVOutposts
 
         private void dgvMissions_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
-            if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
+            //if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
+            //{
+            //    var strValue = e.Value.ToString().RmvExtrSpaces();
+            //    if (string.IsNullOrEmpty(strValue))
+            //    {
+            //        dgvMissions.CancelEdit();
+            //    }
+            //    else
+            //    {
+            //        e.Value = strValue;
+            //        e.ParsingApplied = true;
+            //    }
+            //}
+            var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
+            var cellFormatedValue = e.Value.ToString().RmvExtrSpaces();
+            int t;
+            if (cellFormatedValue == "" && cell.OwningColumn.Name != MyHelper.strDateActualEnd)
             {
-                var strValue = e.Value.ToString().RmvExtrSpaces();
-                if (string.IsNullOrEmpty(strValue))
-                {
-                    dgvMissions.CancelEdit();
-                }
-                else
-                {
-                    e.Value = strValue;
-                    e.ParsingApplied = true;
-                }
+                dgvMissions.CancelEdit();
+                e.ParsingApplied = false;
+                return;
+            }
+            else if (dgvMissions.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
+                && dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32) 
+                && !int.TryParse(cellFormatedValue, out t))
+            {
+                dgvMissions.CancelEdit();
+                //cell.ErrorText = MyHelper.strUncorrectIntValueCell;
+                MessageBox.Show(MyHelper.strUncorrectIntValueCell);
+                e.ParsingApplied = false;
+                return;
+            }
+            else
+            {
+                cell.ErrorText = "";
             }
         }
 
@@ -99,39 +122,39 @@ namespace DGVOutposts
             var row = dgvMissions.Rows[e.RowIndex];
             var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
-            int t;
-            if (cellFormatedValue == "" && cell.OwningColumn.Name != MyHelper.strDateActualEnd)
-            {
-                //dgvMissions.CancelEdit();
-                if (MyHelper.IsEntireRowEmpty(row))
-                    dgvMissions.Rows.Remove(row);
-                else
-                {
-                    cell.ErrorText = MyHelper.strEmptyCell;
-                    cell.Value = oldCellValue;
-                }
-                return;
-            }
-            //else if (dgvMissions.Columns[e.ColumnIndex].CellType == typeof(DataGridViewComboBoxCell))
-            //{
-            //    return;
-            //}
-            //else if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
+            //int t;
+            //if (cellFormatedValue == "" && cell.OwningColumn.Name != MyHelper.strDateActualEnd)
             //{
             //    //dgvMissions.CancelEdit();
-            //    //cell.Value = oldCellValue==null?DBNull.Value:oldCellValue;
-            //    cell.Value = oldCellValue;
-            //    //if (IsEmptyRow(row))
-            //    //    dgvMissions.Rows.Remove(row);
-            //    //else
-            //    cell.ErrorText = MyHelper.strOnlyIntCell;
+            //    if (MyHelper.IsEntireRowEmpty(row))
+            //        dgvMissions.Rows.Remove(row);
+            //    else
+            //    {
+            //        cell.ErrorText = MyHelper.strEmptyCell;
+            //        cell.Value = oldCellValue;
+            //    }
             //    return;
             //}
-            else
-            {
-                cell.ErrorText = "";
-                //if (!dgvMissions.IsCurrentRowDirty || dgvMissions.Rows[e.RowIndex].IsNewRow) return;
-            }
+            ////else if (dgvMissions.Columns[e.ColumnIndex].CellType == typeof(DataGridViewComboBoxCell))
+            ////{
+            ////    return;
+            ////}
+            ////else if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
+            ////{
+            ////    //dgvMissions.CancelEdit();
+            ////    //cell.Value = oldCellValue==null?DBNull.Value:oldCellValue;
+            ////    cell.Value = oldCellValue;
+            ////    //if (IsEmptyRow(row))
+            ////    //    dgvMissions.Rows.Remove(row);
+            ////    //else
+            ////    cell.ErrorText = MyHelper.strOnlyIntCell;
+            ////    return;
+            ////}
+            //else
+            //{
+            //    cell.ErrorText = "";
+            //    //if (!dgvMissions.IsCurrentRowDirty || dgvMissions.Rows[e.RowIndex].IsNewRow) return;
+            //}
 
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {

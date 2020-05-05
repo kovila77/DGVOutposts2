@@ -58,7 +58,5 @@ namespace DGVOutposts
                     break;
             }
         }
-
-        
     }
 }

@@ -85,66 +85,43 @@ namespace DGVOutposts
 
         private void dgvOutposts_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            oldCellValue = dgvOutposts[e.ColumnIndex, e.RowIndex].Value;
+            if (sender == null) return;
+            DataGridView dgv = null;
+            try { dgv = (DataGridView)sender; }
+            catch { return; }
+
+            oldCellValue = dgv[e.ColumnIndex, e.RowIndex].Value;
         }
 
         private void dgvOutposts_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
             //var row = dgvOutposts.Rows[e.RowIndex];
-            var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
+            if (sender == null) return;
+            DataGridView dgv = null;
+            try { dgv = (DataGridView)sender; }
+            catch { return; }
+
+            var cell = dgv[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = e.Value.ToString().RmvExtrSpaces();
-            //e.Value = cellFormatedValue;
-            //if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
-            //{
-            //    //var strValue = e.Value.ToString().RmvExtrSpaces();
-            //    if (string.IsNullOrEmpty(cellFormatedValue))
-            //    {
-            //        dgvOutposts.CancelEdit();
-            //    }
-            //    else
-            //    {
-            //        e.Value = cellFormatedValue;
-            //        e.ParsingApplied = true;
-            //    }
-            //}
-            //if (dgvOutposts.Columns[e.ColumnIndex].CellType == typeof(DataGridViewComboBoxCell))
-            //{
-            //    return;
-            //}
             int t;
+
             if (cellFormatedValue == "")
             {
-                //dgvOutposts.CancelEdit();
-                //if (MyHelper.IsEntireRowEmpty(row))
-                //{
-                //dgvOutposts.Rows.Remove(row);
-                dgvOutposts.CancelEdit();
-                //}
-                //else
-                //{
-                //    cell.ErrorText = MyHelper.strEmptyCell;
-                //    cell.Value = oldCellValue;
-                //}
-                e.ParsingApplied = false;
+                dgv.CancelEdit();
+                //e.ParsingApplied = false;
+                MessageBox.Show(MyHelper.strEmptyCell);
                 return;
             }
-            else if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
+            else if (dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
             {
-                //dgvOutposts.CancelEdit();
-                //cell.Value = oldCellValue==null?DBNull.Value:oldCellValue;
-                dgvOutposts.CancelEdit();
-                //cell.Value = oldCellValue;
-                //if (IsEmptyRow(row))
-                //    dgvOutposts.Rows.Remove(row);
-                //else
-                cell.ErrorText = MyHelper.strOnlyIntCell;
-                e.ParsingApplied = false;
+                dgv.CancelEdit();
+                MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{e.Value}\"");
+                //e.ParsingApplied = false;
                 return;
             }
             else
             {
                 cell.ErrorText = "";
-                //if (!dgvOutposts.IsCurrentRowDirty || dgvOutposts.Rows[e.RowIndex].IsNewRow) return;
             }
         }
 
@@ -153,7 +130,7 @@ namespace DGVOutposts
             if (dgvOutposts.Rows[e.RowIndex].IsNewRow
                 || !dgvOutposts.Columns[e.ColumnIndex].Visible) return;
 
-            // Проверка на пустоту и попытка распаристь значение ячейки
+            //// Проверка на пустоту и попытка распаристь значение ячейки
             var row = dgvOutposts.Rows[e.RowIndex];
             var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
