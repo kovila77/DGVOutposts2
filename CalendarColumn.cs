@@ -65,12 +65,11 @@ namespace DGVOutposts
                 // else
                 //{
                 //ctl.Value = (DateTime)this.Value; 
-                if (this.Value == null)
+                if (this.Value == null || this.Value == DBNull.Value)
                 {
                     ctl.Value = DateTime.Now;
                     this.Value = ctl.Value;
                     //this.DataGridView.CurrentCell.Value = ctl.Value;
-                    //this.DataGridView.NotifyCurrentCellDirty(true);
                     //this.DataGridView.NotifyCurrentCellDirty(true);
                 }
                 else
@@ -79,8 +78,8 @@ namespace DGVOutposts
                 }
                 //}
             }
-            catch
-            { }
+            catch (Exception e)
+            { MessageBox.Show(e.Message); }
         }
 
         public override Type EditType
