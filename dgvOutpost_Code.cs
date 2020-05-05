@@ -84,15 +84,15 @@ namespace DGVOutposts
             //}
         }
 
-        private void dgvOutposts_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
-        {
-            if (sender == null) return;
-            DataGridView dgv = null;
-            try { dgv = (DataGridView)sender; }
-            catch { return; }
+        //private void dgvOutposts_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        //{
+        //    if (sender == null) return;
+        //    DataGridView dgv = null;
+        //    try { dgv = (DataGridView)sender; }
+        //    catch { return; }
 
-            oldCellValue = dgv[e.ColumnIndex, e.RowIndex].Value;
-        }
+        //    oldCellValue = dgv[e.ColumnIndex, e.RowIndex].Value;
+        //}
 
         private void dgvOutposts_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
@@ -141,7 +141,7 @@ namespace DGVOutposts
                                                  };
             foreach (var cellWithPotentialError in cellsWithPotentialErrors)
             {
-                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "")
+                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "" && cellWithPotentialError.ColumnIndex != cell.ColumnIndex)
                 {
                     cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
                     row.ErrorText = MyHelper.strBadRow;
@@ -182,7 +182,7 @@ namespace DGVOutposts
                     return;
                 }
             }
-
+            needCommit = true;
         }
 
         private void dgvOutposts_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -250,22 +250,23 @@ namespace DGVOutposts
             //        return;
             //    }
             //}
-
-            using (var sConn = new NpgsqlConnection(sConnStr))
+            if (needCommit)
             {
-                sConn.Open();
-                var sCommand = new NpgsqlCommand
+                using (var sConn = new NpgsqlConnection(sConnStr))
                 {
-                    Connection = sConn
-                };
-                sCommand.Parameters.AddWithValue("outpost_name", row.Cells[MyHelper.strOutpostName].Value.ToString());
-                sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[MyHelper.strOutpostEconomicValue].Value);
-                sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[MyHelper.strOutpostCoordinateX].Value);
-                sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[MyHelper.strOutpostCoordinateY].Value);
-                sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
-                if (row.Cells[MyHelper.strOutpostId].FormattedValue.ToString().Trim().Length > 0)
-                {
-                    sCommand.CommandText = @"
+                    sConn.Open();
+                    var sCommand = new NpgsqlCommand
+                    {
+                        Connection = sConn
+                    };
+                    sCommand.Parameters.AddWithValue("outpost_name", row.Cells[MyHelper.strOutpostName].Value.ToString());
+                    sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[MyHelper.strOutpostEconomicValue].Value);
+                    sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[MyHelper.strOutpostCoordinateX].Value);
+                    sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[MyHelper.strOutpostCoordinateY].Value);
+                    sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+                    if (row.Cells[MyHelper.strOutpostId].FormattedValue.ToString().Trim().Length > 0)
+                    {
+                        sCommand.CommandText = @"
                             UPDATE outposts
                             SET outpost_name           = @outpost_name,
                                 outpost_economic_value = @outpost_economic_value,
@@ -273,17 +274,17 @@ namespace DGVOutposts
                                 outpost_coordinate_y   = @outpost_coordinate_y,
                                 outpost_coordinate_z   = @outpost_coordinate_z
                             WHERE outpost_id = @outpost_id;";
-                    sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[MyHelper.strOutpostId].Value);
-                    sCommand.ExecuteNonQuery();
-                    _comboBoxColumnOutpost.Change((int)row.Cells[MyHelper.strOutpostId].Value,
-                                                row.Cells[MyHelper.strOutpostName].Value.ToString(),
-                                                (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
-                                                (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
-                                                (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
-                }
-                else
-                {
-                    sCommand.CommandText = @"
+                        sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[MyHelper.strOutpostId].Value);
+                        sCommand.ExecuteNonQuery();
+                        _comboBoxColumnOutpost.Change((int)row.Cells[MyHelper.strOutpostId].Value,
+                                                    row.Cells[MyHelper.strOutpostName].Value.ToString(),
+                                                    (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
+                                                    (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
+                                                    (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+                    }
+                    else
+                    {
+                        sCommand.CommandText = @"
                             INSERT INTO outposts (outpost_name,
                                                   outpost_economic_value,
                                                   outpost_coordinate_x,
@@ -295,13 +296,15 @@ namespace DGVOutposts
                                     @outpost_coordinate_y,
                                     @outpost_coordinate_z)
                             RETURNING outpost_id;";
-                    row.Cells[MyHelper.strOutpostId].Value = sCommand.ExecuteScalar();
-                    _comboBoxColumnOutpost.Add((int)row.Cells[MyHelper.strOutpostId].Value,
-                                                row.Cells[MyHelper.strOutpostName].Value.ToString(),
-                                                (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
-                                                (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
-                                                (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+                        row.Cells[MyHelper.strOutpostId].Value = sCommand.ExecuteScalar();
+                        _comboBoxColumnOutpost.Add((int)row.Cells[MyHelper.strOutpostId].Value,
+                                                    row.Cells[MyHelper.strOutpostName].Value.ToString(),
+                                                    (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
+                                                    (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
+                                                    (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+                    }
                 }
+                needCommit = false;
             }
         }
 

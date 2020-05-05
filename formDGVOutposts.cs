@@ -18,7 +18,8 @@ namespace DGVOutposts
         //private bool rowCanBeCommitedDGVOutpost;
 
         //DataGridViewRow RowForDelete = null;
-        private object oldCellValue;
+        private bool needCommit;
+        private object oldCellValue = false;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
         private delegate void RowCheck(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e);
