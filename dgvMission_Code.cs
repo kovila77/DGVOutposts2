@@ -122,39 +122,6 @@ namespace DGVOutposts
             var row = dgvMissions.Rows[e.RowIndex];
             var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
-            //int t;
-            //if (cellFormatedValue == "" && cell.OwningColumn.Name != MyHelper.strDateActualEnd)
-            //{
-            //    //dgvMissions.CancelEdit();
-            //    if (MyHelper.IsEntireRowEmpty(row))
-            //        dgvMissions.Rows.Remove(row);
-            //    else
-            //    {
-            //        cell.ErrorText = MyHelper.strEmptyCell;
-            //        cell.Value = oldCellValue;
-            //    }
-            //    return;
-            //}
-            ////else if (dgvMissions.Columns[e.ColumnIndex].CellType == typeof(DataGridViewComboBoxCell))
-            ////{
-            ////    return;
-            ////}
-            ////else if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
-            ////{
-            ////    //dgvMissions.CancelEdit();
-            ////    //cell.Value = oldCellValue==null?DBNull.Value:oldCellValue;
-            ////    cell.Value = oldCellValue;
-            ////    //if (IsEmptyRow(row))
-            ////    //    dgvMissions.Rows.Remove(row);
-            ////    //else
-            ////    cell.ErrorText = MyHelper.strOnlyIntCell;
-            ////    return;
-            ////}
-            //else
-            //{
-            //    cell.ErrorText = "";
-            //    //if (!dgvMissions.IsCurrentRowDirty || dgvMissions.Rows[e.RowIndex].IsNewRow) return;
-            //}
 
             //Проверка соответсвия ячейки
             var valueBegin = dgvMissions[MyHelper.strDateBegin, e.RowIndex].Value;
@@ -197,35 +164,8 @@ namespace DGVOutposts
             else
                 return;
 
-            //// Проверка уникальности строк
-            //foreach (DataGridViewRow curRow in dgvMissions.Rows)
-            //{
-            //    if (!curRow.IsNewRow
-            //        && curRow.Index != row.Index
-            //        && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-            //            == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-            //        && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
-            //            == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
-            //        && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
-            //            == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
-            //        && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
-            //            == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
-            //    {
-            //        //dgvMissions.CancelEdit();
-            //        MessageBox.Show($"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!");
-            //        row.Cells[e.ColumnIndex].Value = oldCellValue;
-            //        if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
-            //        {
-            //            cell.ErrorText = MyHelper.strEmptyCell;
-            //            row.ErrorText = MyHelper.strBadRow;
-            //        }
-            //        //row.ErrorText = strExistingOutpostRow;
-            //        return;
-            //    }
-            //}
-            //MessageBox.Show("Фиксация");
-            //return;
-
+            // Проверка уникальности строк
+            
             using (var sConn = new NpgsqlConnection(sConnStr))
             {
                 sConn.Open();

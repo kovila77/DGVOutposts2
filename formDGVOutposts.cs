@@ -81,26 +81,32 @@ namespace DGVOutposts
             var cell = dgv[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = e.Value.ToString().RmvExtrSpaces();
             int t;
-
+            
             if (cellFormatedValue == "")
             {
-                dgv.CancelEdit();
-                //e.ParsingApplied = false;
+                //dgv.CancelEdit();
+                //e.Value = oldCellValue.ToString() ;
+                //e.Value = oldCellValue;
                 MessageBox.Show(MyHelper.strEmptyCell);
+                e.ParsingApplied = false;
+                //dgv.RefreshEdit();
                 return;
             }
-            else if (dgvMissions.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
-                && dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32)
+            else if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
+                && dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32)
                 && !int.TryParse(cellFormatedValue, out t))
             {
-                dgv.CancelEdit();
+                //dgv.CancelEdit();
+                //e.Value = null;
                 MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{e.Value}\"");
-                //e.ParsingApplied = false;
+                e.ParsingApplied = false;
+                //dgv.RefreshEdit();
                 return;
             }
             else
             {
                 cell.ErrorText = "";
+                e.ParsingApplied = true;
             }
         }
 
