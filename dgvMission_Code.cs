@@ -77,8 +77,16 @@ namespace DGVOutposts
         {
             if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
             {
-                e.Value = e.Value.ToString().RmvExtrSpaces();
-                e.ParsingApplied = true;
+                var strValue = e.Value.ToString().RmvExtrSpaces();
+                if (string.IsNullOrEmpty(strValue))
+                {
+                    dgvMissions.CancelEdit();
+                }
+                else
+                {
+                    e.Value = strValue;
+                    e.ParsingApplied = true;
+                }
             }
         }
 

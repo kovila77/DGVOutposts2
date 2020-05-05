@@ -92,8 +92,16 @@ namespace DGVOutposts
         {
             if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
             {
-                e.Value = e.Value.ToString().RmvExtrSpaces();
-                e.ParsingApplied = true;
+                var strValue = e.Value.ToString().RmvExtrSpaces();
+                if (string.IsNullOrEmpty(strValue))
+                {
+                    dgvOutposts.CancelEdit();
+                }
+                else
+                {
+                    e.Value = strValue;
+                    e.ParsingApplied = true;
+                }
             }
         }
 
@@ -114,13 +122,15 @@ namespace DGVOutposts
             if (cellFormatedValue == "")
             {
                 //dgvOutposts.CancelEdit();
-                if (MyHelper.IsEntireRowEmpty(row))
-                    dgvOutposts.Rows.Remove(row);
-                else
-                {
-                    cell.ErrorText = MyHelper.strEmptyCell;
-                    cell.Value = oldCellValue;
-                }
+                //if (MyHelper.IsEntireRowEmpty(row))
+                //{
+                //    dgvOutposts.Rows.Remove(row);
+                //}
+                //else
+                //{
+                cell.ErrorText = MyHelper.strEmptyCell;
+                cell.Value = oldCellValue;
+                //}
                 return;
             }
             else if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
@@ -170,13 +180,13 @@ namespace DGVOutposts
             {
                 if (!curRow.IsNewRow
                     && curRow.Index != row.Index
-                    && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces() 
+                    && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
                         == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value 
+                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
                         == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
-                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value 
+                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
                         == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
-                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value 
+                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
                         == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
                 {
                     //dgvOutposts.CancelEdit();
@@ -246,103 +256,23 @@ namespace DGVOutposts
             }
         }
 
-
-        private void dgvOutposts_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void dgvOutposts_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
         {
-            //if (!dgvOutposts.IsCurrentRowDirty || dgvOutposts.Rows[e.RowIndex].IsNewRow) return;
-
             //var row = dgvOutposts.Rows[e.RowIndex];
-            //var cellsWithPotentialErrors = new List<DataGridViewCell> {
-            //                                       row.Cells[strOutpostName],
-            //                                       row.Cells[strOutpostEconomicValue],
-            //                                       row.Cells[strOutpostCoordinateX],
-            //                                       row.Cells[strOutpostCoordinateY],
-            //                                       row.Cells[strOutpostCoordinateZ],
-            //                                     };
-            //foreach (var cell in cellsWithPotentialErrors)
+            //if (MyHelper.IsEntireRowEmpty(row))
             //{
-            //    if (string.IsNullOrEmpty(cell.FormattedValue.ToString().Trim()))
-            //    {
-            //        cell.ErrorText = strEmptyCell;
-            //        row.ErrorText = strBadRow;
-            //    }
-            //    else
-            //    {
-            //        cell.ErrorText = "";
-            //    }
+            //    //dgvOutposts.Rows.Remove(row);
+            //    RowForDelete = row;
             //}
-            //if (cellsWithPotentialErrors.FirstOrDefault(cell => cell.ErrorText.Length > 0) == null)
-            //    row.ErrorText = "";
-            //else
-            //    return;
+        }
 
-            //foreach (DataGridViewRow curRow in dgvOutposts.Rows)
+        private void dgvOutposts_RowValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            //if (RowForDelete != null)
             //{
-            //    if (!curRow.IsNewRow
-            //        && curRow.Index != row.Index
-            //        && curRow.Cells[strOutpostName].Value.ToString() == row.Cells[strOutpostName].Value.ToString()
-            //        && (int)curRow.Cells[strOutpostCoordinateX].Value == (int)row.Cells[strOutpostCoordinateX].Value
-            //        && (int)curRow.Cells[strOutpostCoordinateY].Value == (int)row.Cells[strOutpostCoordinateY].Value
-            //        && (int)curRow.Cells[strOutpostCoordinateZ].Value == (int)row.Cells[strOutpostCoordinateZ].Value)
-            //    {
-            //        //dgvOutposts.CancelEdit();
-            //        row.Cells[e.ColumnIndex].Value = oldCellValue;
-            //        row.ErrorText = strExistingOutpostRow;
-            //        return;
-            //    }
-            //}
-
-            //using (var sConn = new NpgsqlConnection(sConnStr))
-            //{
-            //    sConn.Open();
-            //    var sCommand = new NpgsqlCommand
-            //    {
-            //        Connection = sConn
-            //    };
-            //    sCommand.Parameters.AddWithValue("outpost_name", row.Cells[strOutpostName].Value.ToString());
-            //    sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[strOutpostEconomicValue].Value);
-            //    sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[strOutpostCoordinateX].Value);
-            //    sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[strOutpostCoordinateY].Value);
-            //    sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[strOutpostCoordinateZ].Value);
-            //    if (row.Cells[strOutpostId].FormattedValue.ToString().Trim().Length > 0)
-            //    {
-            //        sCommand.CommandText = @"
-            //                UPDATE outposts
-            //                SET outpost_name           = @outpost_name,
-            //                    outpost_economic_value = @outpost_economic_value,
-            //                    outpost_coordinate_x   = @outpost_coordinate_x,
-            //                    outpost_coordinate_y   = @outpost_coordinate_y,
-            //                    outpost_coordinate_z   = @outpost_coordinate_z
-            //                WHERE outpost_id = @outpost_id;";
-            //        sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[strOutpostId].Value);
-            //        sCommand.ExecuteNonQuery();
-            //        _comboBoxColumnOutpost.Change((int)row.Cells[strOutpostId].Value,
-            //                                    row.Cells[strOutpostName].Value.ToString(),
-            //                                    (int)row.Cells[strOutpostCoordinateX].Value,
-            //                                    (int)row.Cells[strOutpostCoordinateY].Value,
-            //                                    (int)row.Cells[strOutpostCoordinateZ].Value);
-            //    }
-            //    else
-            //    {
-            //        sCommand.CommandText = @"
-            //                INSERT INTO outposts (outpost_name,
-            //                                      outpost_economic_value,
-            //                                      outpost_coordinate_x,
-            //                                      outpost_coordinate_y,
-            //                                      outpost_coordinate_z)
-            //                VALUES (@outpost_name,
-            //                        @outpost_economic_value,
-            //                        @outpost_coordinate_x,
-            //                        @outpost_coordinate_y,
-            //                        @outpost_coordinate_z)
-            //                RETURNING outpost_id;";
-            //        row.Cells["outpost_id"].Value = sCommand.ExecuteScalar();
-            //        _comboBoxColumnOutpost.Add((int)row.Cells[strOutpostId].Value,
-            //                                    row.Cells[strOutpostName].Value.ToString(),
-            //                                    (int)row.Cells[strOutpostCoordinateX].Value,
-            //                                    (int)row.Cells[strOutpostCoordinateY].Value,
-            //                                    (int)row.Cells[strOutpostCoordinateZ].Value);
-            //    }
+            //    dgvOutposts.
+            //    dgvOutposts.Rows.Remove(RowForDelete);
+            //    RowForDelete = null;
             //}
         }
 

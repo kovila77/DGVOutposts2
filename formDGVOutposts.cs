@@ -13,10 +13,11 @@ namespace DGVOutposts
     {
         //private DataTable dtOutposts;
         //private DataTable _dtOutposts = null;
-        
-        
+
+
         //private bool rowCanBeCommitedDGVOutpost;
 
+        //DataGridViewRow RowForDelete = null;
         private object oldCellValue;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
@@ -58,5 +59,6 @@ namespace DGVOutposts
             }
         }
 
+        
     }
 }
