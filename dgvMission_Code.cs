@@ -94,17 +94,17 @@ namespace DGVOutposts
             if (cellFormatedValue == "" && cell.OwningColumn.Name != MyHelper.strDateActualEnd)
             {
                 dgvMissions.CancelEdit();
-                e.ParsingApplied = false;
+                //e.ParsingApplied = false;
                 return;
             }
             else if (dgvMissions.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
-                && dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32) 
+                && dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32)
                 && !int.TryParse(cellFormatedValue, out t))
             {
                 dgvMissions.CancelEdit();
                 //cell.ErrorText = MyHelper.strUncorrectIntValueCell;
                 MessageBox.Show(MyHelper.strUncorrectIntValueCell);
-                e.ParsingApplied = false;
+                //e.ParsingApplied = false;
                 return;
             }
             else
@@ -155,6 +155,23 @@ namespace DGVOutposts
             //    cell.ErrorText = "";
             //    //if (!dgvMissions.IsCurrentRowDirty || dgvMissions.Rows[e.RowIndex].IsNewRow) return;
             //}
+
+            //Проверка соответсвия ячейки
+            var valueBegin = dgvMissions[MyHelper.strDateBegin, e.RowIndex].Value;
+            var valuePlanEnd = dgvMissions[MyHelper.strDatePlanEnd, e.RowIndex].Value;
+            var valueActual = dgvMissions[MyHelper.strDateActualEnd, e.RowIndex].Value;
+            if (cell.OwningColumn.Name == MyHelper.strDateBegin
+                && ((valuePlanEnd != null) && (DateTime)cell.Value > (DateTime)valuePlanEnd
+                    || valueActual != null && (DateTime)cell.Value > (DateTime)valueActual)
+                ||
+                (cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd)
+                    && valueBegin != null && (DateTime)cell.Value < (DateTime)valueBegin)
+            {
+                MessageBox.Show("Дата окончания не может быть меньше даты начала!");
+                row.ErrorText = MyHelper.strBadRow;
+                cell.Value = oldCellValue;
+                return;
+            }
 
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {

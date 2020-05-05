@@ -130,45 +130,9 @@ namespace DGVOutposts
             if (dgvOutposts.Rows[e.RowIndex].IsNewRow
                 || !dgvOutposts.Columns[e.ColumnIndex].Visible) return;
 
-            //// Проверка на пустоту и попытка распаристь значение ячейки
             var row = dgvOutposts.Rows[e.RowIndex];
             var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
-            //if (dgvOutposts.Columns[e.ColumnIndex].CellType == typeof(DataGridViewComboBoxCell))
-            //{
-            //    return;
-            //}
-            //int t;
-            //if (cellFormatedValue == "")
-            //{
-            //    //dgvOutposts.CancelEdit();
-            //    //if (MyHelper.IsEntireRowEmpty(row))
-            //    //{
-            //    //    dgvOutposts.Rows.Remove(row);
-            //    //}
-            //    //else
-            //    //{
-            //    cell.ErrorText = MyHelper.strEmptyCell;
-            //    cell.Value = oldCellValue;
-            //    //}
-            //    return;
-            //}
-            //else if (dgvOutposts.Columns[e.ColumnIndex].ValueType == typeof(Int32) && !int.TryParse(cellFormatedValue, out t))
-            //{
-            //    //dgvOutposts.CancelEdit();
-            //    //cell.Value = oldCellValue==null?DBNull.Value:oldCellValue;
-            //    cell.Value = oldCellValue;
-            //    //if (IsEmptyRow(row))
-            //    //    dgvOutposts.Rows.Remove(row);
-            //    //else
-            //    cell.ErrorText = MyHelper.strOnlyIntCell;
-            //    return;
-            //}
-            //else
-            //{
-            //    cell.ErrorText = "";
-            //    //if (!dgvOutposts.IsCurrentRowDirty || dgvOutposts.Rows[e.RowIndex].IsNewRow) return;
-            //}
 
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {

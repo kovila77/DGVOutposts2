@@ -99,13 +99,14 @@
             this.dgvOutposts.Name = "dgvOutposts";
             this.dgvOutposts.Size = new System.Drawing.Size(786, 394);
             this.dgvOutposts.TabIndex = 0;
-            this.dgvOutposts.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvOutposts_CellBeginEdit);
+            this.dgvOutposts.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgv_CellBeginEdit);
             this.dgvOutposts.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellEndEdit);
-            this.dgvOutposts.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvOutposts_CellParsing);
+            this.dgvOutposts.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgv_CellParsing);
             this.dgvOutposts.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvOutposts_DataError);
             this.dgvOutposts.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_RowValidated);
             this.dgvOutposts.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvOutposts_RowValidating);
             this.dgvOutposts.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvOutposts_UserDeletingRow);
+            this.dgvOutposts.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgv_KeyUp);
             // 
             // tpMissions
             // 
@@ -127,11 +128,12 @@
             this.dgvMissions.Name = "dgvMissions";
             this.dgvMissions.Size = new System.Drawing.Size(786, 394);
             this.dgvMissions.TabIndex = 0;
-            this.dgvMissions.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMissions_CellBeginEdit);
+            this.dgvMissions.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgv_CellBeginEdit);
             this.dgvMissions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellEndEdit);
             this.dgvMissions.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellMouseEnter);
-            this.dgvMissions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvMissions_CellParsing);
+            this.dgvMissions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgv_CellParsing);
             this.dgvMissions.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvMissions_UserDeletingRow);
+            this.dgvMissions.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgv_KeyUp);
             // 
             // contextMenuStripNULL
             // 
@@ -170,7 +172,7 @@
             this.перезагрузитьДанныеToolStripMenuItem.Name = "перезагрузитьДанныеToolStripMenuItem";
             this.перезагрузитьДанныеToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.перезагрузитьДанныеToolStripMenuItem.Text = "Перезагрузить данные";
-            this.перезагрузитьДанныеToolStripMenuItem.Click += new System.EventHandler(this.перезагрузитьДанныеToolStripMenuItem_Click);
+            this.перезагрузитьДанныеToolStripMenuItem.Click += new System.EventHandler(this.ReloadDGVToolStripMenuItem_Click);
             // 
             // dataGridViewTextBoxColumn2
             // 
