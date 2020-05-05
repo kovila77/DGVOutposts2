@@ -15,6 +15,7 @@ namespace DGVOutposts
             //_comboBoxColumnOutpost.Clear();
             _comboBoxColumnOutpost.InitializeDataTableOutpost();
 
+            dgvOutposts.CancelEdit();
             dgvOutposts.Rows.Clear();
             dgvOutposts.Columns.Clear();
             dgvOutposts.DefaultCellStyle.NullValue = null;
@@ -133,6 +134,11 @@ namespace DGVOutposts
             var row = dgvOutposts.Rows[e.RowIndex];
             var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
+
+            if (cell.ValueType == typeof(String))
+            {
+                cell.Value = cellFormatedValue;
+            }
 
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {
