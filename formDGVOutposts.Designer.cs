@@ -69,6 +69,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(800, 426);
             this.tabControl1.TabIndex = 1;
+            this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
             // 
             // tpOutposts
             // 
@@ -142,13 +143,13 @@
             this.contextMenuStripNULL.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setNULLToolStripMenuItem});
             this.contextMenuStripNULL.Name = "contextMenuStrip1";
-            this.contextMenuStripNULL.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStripNULL.Size = new System.Drawing.Size(123, 26);
             this.contextMenuStripNULL.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStrip_Opening);
             // 
             // setNULLToolStripMenuItem
             // 
             this.setNULLToolStripMenuItem.Name = "setNULLToolStripMenuItem";
-            this.setNULLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setNULLToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.setNULLToolStripMenuItem.Text = "Set NULL";
             this.setNULLToolStripMenuItem.Click += new System.EventHandler(this.setNULLToolStripMenuItem_Click);
             // 

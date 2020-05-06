@@ -21,7 +21,7 @@ namespace DGVOutposts
         //private bool needUniqueCheckAndCommitOutposts;
         private object oldCellValue = false;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
-
+        private int currentTab = 0;
 
         //private delegate void RowCheck(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e);
 
@@ -65,8 +65,23 @@ namespace DGVOutposts
                     break;
             }
         }
-
-
+        private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            switch (currentTab)
+            {
+                case 0:
+                    dgvOutposts.CancelEdit();
+                    dgvOutposts_RowValidating(dgvOutposts, new DataGridViewCellCancelEventArgs(dgvOutposts.CurrentCell.ColumnIndex, dgvOutposts.CurrentCell.RowIndex));
+                    break;
+                case 1:
+                    dgvMissions.CancelEdit();
+                    dgvMissions_RowValidating(dgvMissions, new DataGridViewCellCancelEventArgs(dgvMissions.CurrentCell.ColumnIndex, dgvMissions.CurrentCell.RowIndex));
+                    break;
+                default:
+                    break;
+            }
+            currentTab = tabControl1.SelectedIndex; 
+        }
 
         private void dgv_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
