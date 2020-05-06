@@ -126,7 +126,7 @@ namespace DGVOutposts
             }
         }
 
-        private void dgvOutposts_RowChecking(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e)
+        private void dgvOutposts_RowEmtpyCellChecking(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e)
         {
             var row = cell.OwningRow;
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
@@ -155,9 +155,6 @@ namespace DGVOutposts
                 row.ErrorText = "";
             else
                 return;
-
-
-            //needUniqueCheckAndCommitOutposts = true;
         }
 
         private void dgvOutposts_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -246,7 +243,6 @@ namespace DGVOutposts
                             && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
                                 == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
                     {
-                        //dgvOutposts.CancelEdit();
                         string eo = $"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
                         MessageBox.Show(eo);
                         row.Cells[e.ColumnIndex].Value = oldCellValue;
@@ -255,9 +251,7 @@ namespace DGVOutposts
                             cell.ErrorText = MyHelper.strEmptyCell;
                             row.ErrorText = MyHelper.strBadRow;
                             row.ErrorText += " " + eo;
-
                         }
-                        //row.ErrorText = strExistingOutpostRow;
                         return;
                     }
                 }
@@ -314,7 +308,6 @@ namespace DGVOutposts
                                                     (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
                     }
                 }
-                needUniqueCheckAndCommitOutposts = false;
             }
         }
 
@@ -380,17 +373,5 @@ namespace DGVOutposts
                 }
             }
         }
-
-        //private void InitializeComponent()
-        //{
-        //    this.SuspendLayout();
-        //    // 
-        //    // formDGVOutposts
-        //    // 
-        //    this.ClientSize = new System.Drawing.Size(266, 230);
-        //    this.Name = "formDGVOutposts";
-        //    this.ResumeLayout(false);
-
-        //}
     }
 }

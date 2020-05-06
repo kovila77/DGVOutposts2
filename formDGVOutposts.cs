@@ -18,7 +18,7 @@ namespace DGVOutposts
         //private bool rowCanBeCommitedDGVOutpost;
 
         //DataGridViewRow RowForDelete = null;
-        private bool needUniqueCheckAndCommitOutposts;
+        //private bool needUniqueCheckAndCommitOutposts;
         private object oldCellValue = false;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
@@ -36,7 +36,8 @@ namespace DGVOutposts
         public formDGVOutposts()
         {
             InitializeComponent();
-            dgvOutposts.Tag = new RowCheck(dgvOutposts_RowChecking);
+            dgvOutposts.Tag = new RowCheck(dgvOutposts_RowEmtpyCellChecking);
+            dgvMissions.Tag = new RowCheck(dgvMission_RowEmtpyCellChecking);
             //dgvOutposts.Tag = new RowCheck(dgvOutposts_RowChecking);
             InitializeDGVOutposts();
             InitializeDGVMissions();
@@ -97,19 +98,10 @@ namespace DGVOutposts
             var cell = dgv[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = e.FormattedValue.ToString().RmvExtrSpaces();
             int t;
-
+            
             if (cellFormatedValue == "")
             {
-                //if (IsEntireRowEmpty(cell.OwningRow, cell.OwningColumn.Index))
-                //{
-                //    //if (MessageBox.Show(MyHelper.strEmptyCell, "", MessageBoxButtons.YesNo) == DialogResult.OK)
-                //    if (MessageBox.Show("Отменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                //        dgv.CancelEdit();
-                //    else
-                //        e.Cancel = true;
-                //}
-                //else
-                    dgv.CancelEdit();
+                dgv.CancelEdit();
                 return;
             }
             else if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
@@ -121,14 +113,6 @@ namespace DGVOutposts
                     dgv.CancelEdit();
                 }
                 else e.Cancel = true;
-                //if (!IsEntireRowEmpty(cell.OwningRow, cell.OwningColumn.Index))
-                //{
-                //    e.Cancel = true;
-                //}
-                //else
-                //{
-                //    dgv.CancelEdit();
-                //}
                 return;
             }
             else

@@ -113,31 +113,41 @@ namespace DGVOutposts
             }
         }
 
-        private void dgvMissions_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dgvMission_RowEmtpyCellChecking(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e)
         {
-            if (dgvMissions.Rows[e.RowIndex].IsNewRow
-               || !dgvMissions.Columns[e.ColumnIndex].Visible) return;
-
-            // Проверка на пустоту и попытка распаристь значение ячейки
-            var row = dgvMissions.Rows[e.RowIndex];
-            var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
+            var row = cell.OwningRow;
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
 
             //Проверка соответсвия ячейки
-            var valueBegin = dgvMissions[MyHelper.strDateBegin, e.RowIndex].Value;
-            var valuePlanEnd = dgvMissions[MyHelper.strDatePlanEnd, e.RowIndex].Value;
-            var valueActual = dgvMissions[MyHelper.strDateActualEnd, e.RowIndex].Value;
-            if (cell.OwningColumn.Name == MyHelper.strDateBegin
-                && ((valuePlanEnd != null) && (DateTime)cell.Value > (DateTime)valuePlanEnd
-                    || valueActual != null && (DateTime)cell.Value > (DateTime)valueActual)
-                ||
-                (cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd)
-                    && valueBegin != null && (DateTime)cell.Value < (DateTime)valueBegin)
+            if (cell.OwningColumn.Name == MyHelper.strDateBegin || cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd)
             {
-                MessageBox.Show("Дата окончания не может быть меньше даты начала!");
-                row.ErrorText = MyHelper.strBadRow;
-                cell.Value = oldCellValue;
-                return;
+                var valueBegin =  dgvMissions[MyHelper.strDateBegin, e.RowIndex].Value;
+                var valuePlanEnd =  dgvMissions[MyHelper.strDatePlanEnd, e.RowIndex].Value;
+                var valueActual =  dgvMissions[MyHelper.strDateActualEnd, e.RowIndex].Value;
+                if (cell.OwningColumn.Name == MyHelper.strDateBegin
+                    && ((valuePlanEnd != null) && DateTime.Parse((String)e.FormattedValue) > ((DateTime)valuePlanEnd).Date
+                        || valueActual != null && DateTime.Parse((String)e.FormattedValue) > ((DateTime)valueActual).Date)
+                    ||
+                    (cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd)
+                        && valueBegin != null && DateTime.Parse((String)e.FormattedValue) < ((DateTime)valueBegin).Date)
+                {
+                    if (MessageBox.Show("Дата окончания не может быть меньше даты начала! Отменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        //row.ErrorText = MyHelper.strBadRow;
+                        //cell.Value = oldCellValue;
+                        dgvMissions.CancelEdit();
+                        if (cell.FormattedValue.ToString().RmvExtrSpaces() == "")
+                        {
+                            cell.ErrorText = MyHelper.strEmptyCell;
+                            row.ErrorText = MyHelper.strBadRow + "Дата окончания не может быть меньше даты начала!";
+                        }
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
+                    return;
+                }
             }
 
             // Проверка можно ли фиксировать строку
@@ -149,7 +159,7 @@ namespace DGVOutposts
                                                  };
             foreach (var cellWithPotentialError in cellsWithPotentialErrors)
             {
-                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "")
+                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "" && cellWithPotentialError.ColumnIndex != cell.ColumnIndex)
                 {
                     cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
                     row.ErrorText = MyHelper.strBadRow;
@@ -163,25 +173,78 @@ namespace DGVOutposts
                 row.ErrorText = "";
             else
                 return;
+        }
+
+        private void dgvMissions_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgvMissions.Rows[e.RowIndex].IsNewRow
+               || !dgvMissions.Columns[e.ColumnIndex].Visible) return;
+
+            // Проверка на пустоту и попытка распаристь значение ячейки
+            var row = dgvMissions.Rows[e.RowIndex];
+            var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
+            var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
+
+            ////Проверка соответсвия ячейки
+            //var valueBegin = dgvMissions[MyHelper.strDateBegin, e.RowIndex].Value;
+            //var valuePlanEnd = dgvMissions[MyHelper.strDatePlanEnd, e.RowIndex].Value;
+            //var valueActual = dgvMissions[MyHelper.strDateActualEnd, e.RowIndex].Value;
+            //if (cell.OwningColumn.Name == MyHelper.strDateBegin
+            //    && ((valuePlanEnd != null) && (DateTime)cell.Value > (DateTime)valuePlanEnd
+            //        || valueActual != null && (DateTime)cell.Value > (DateTime)valueActual)
+            //    ||
+            //    (cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd)
+            //        && valueBegin != null && (DateTime)cell.Value < (DateTime)valueBegin)
+            //{
+            //    MessageBox.Show("Дата окончания не может быть меньше даты начала!");
+            //    row.ErrorText = MyHelper.strBadRow;
+            //    cell.Value = oldCellValue;
+            //    return;
+            //}
+
+            //// Проверка можно ли фиксировать строку
+            //var cellsWithPotentialErrors = new List<DataGridViewCell> {
+            //                                       row.Cells[MyHelper.strMissionDescription],
+            //                                       row.Cells[MyHelper.strOutpostId],
+            //                                       row.Cells[MyHelper.strDateBegin],
+            //                                       row.Cells[MyHelper.strDatePlanEnd],
+            //                                     };
+            //foreach (var cellWithPotentialError in cellsWithPotentialErrors)
+            //{
+            //    if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "")
+            //    {
+            //        cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
+            //        row.ErrorText = MyHelper.strBadRow;
+            //    }
+            //    else
+            //    {
+            //        cellWithPotentialError.ErrorText = "";
+            //    }
+            //}
+            //if (cellsWithPotentialErrors.FirstOrDefault(cellWithPotentialError => cellWithPotentialError.ErrorText.Length > 0) == null)
+            //    row.ErrorText = "";
+            //else
+            //    return;
 
             // Проверка уникальности строк
-            
-            using (var sConn = new NpgsqlConnection(sConnStr))
+            if (row.ErrorText == "")
             {
-                sConn.Open();
-                var sCommand = new NpgsqlCommand
+                using (var sConn = new NpgsqlConnection(sConnStr))
                 {
-                    Connection = sConn
-                };
-                sCommand.Parameters.AddWithValue("mission_description", row.Cells[MyHelper.strMissionDescription].Value);
-                sCommand.Parameters.AddWithValue("outpost_id", row.Cells[MyHelper.strOutpostId].Value);
-                sCommand.Parameters.AddWithValue("date_begin", row.Cells[MyHelper.strDateBegin].Value);
-                sCommand.Parameters.AddWithValue("date_plan_end", row.Cells[MyHelper.strDatePlanEnd].Value);
-                sCommand.Parameters.AddWithValue("date_actual_end", row.Cells[MyHelper.strDateActualEnd].Value == null ? DBNull.Value : row.Cells[MyHelper.strDateActualEnd].Value);
+                    sConn.Open();
+                    var sCommand = new NpgsqlCommand
+                    {
+                        Connection = sConn
+                    };
+                    sCommand.Parameters.AddWithValue("mission_description", row.Cells[MyHelper.strMissionDescription].Value);
+                    sCommand.Parameters.AddWithValue("outpost_id", row.Cells[MyHelper.strOutpostId].Value);
+                    sCommand.Parameters.AddWithValue("date_begin", row.Cells[MyHelper.strDateBegin].Value);
+                    sCommand.Parameters.AddWithValue("date_plan_end", row.Cells[MyHelper.strDatePlanEnd].Value);
+                    sCommand.Parameters.AddWithValue("date_actual_end", row.Cells[MyHelper.strDateActualEnd].Value == null ? DBNull.Value : row.Cells[MyHelper.strDateActualEnd].Value);
 
-                if (row.Cells[MyHelper.strMissionId].Value != null)
-                {
-                    sCommand.CommandText = @"
+                    if (row.Cells[MyHelper.strMissionId].Value != null)
+                    {
+                        sCommand.CommandText = @"
                         UPDATE outpost_missions
                         SET outpost_id          = @outpost_id,
                             mission_description = @mission_description,
@@ -189,12 +252,12 @@ namespace DGVOutposts
                             date_plan_end       = @date_plan_end,
                             date_actual_end     = @date_actual_end
                         WHERE mission_id        = @mission_id;";
-                    sCommand.Parameters.AddWithValue("mission_id", (int)row.Cells[MyHelper.strMissionId].Value);
-                    sCommand.ExecuteNonQuery();
-                }
-                else
-                {
-                    sCommand.CommandText = @"
+                        sCommand.Parameters.AddWithValue("mission_id", (int)row.Cells[MyHelper.strMissionId].Value);
+                        sCommand.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        sCommand.CommandText = @"
                         INSERT INTO outpost_missions (outpost_id,
                                                       mission_description,
                                                       date_begin,
@@ -206,7 +269,8 @@ namespace DGVOutposts
                                 @date_plan_end,
                                 @date_actual_end)
                         RETURNING mission_id;";
-                    row.Cells[MyHelper.strMissionId].Value = sCommand.ExecuteScalar();
+                        row.Cells[MyHelper.strMissionId].Value = sCommand.ExecuteScalar();
+                    }
                 }
             }
         }
