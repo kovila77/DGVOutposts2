@@ -29,7 +29,7 @@ namespace DGVOutposts
             dgvMissions.Columns[MyHelper.strOutpostId].ValueType = typeof(int);
             dgvMissions.Columns[MyHelper.strDateBegin].ValueType = typeof(DateTime);
             dgvMissions.Columns[MyHelper.strDatePlanEnd].ValueType = typeof(DateTime);
-            dgvMissions.Columns[MyHelper.strDateActualEnd].ValueType = typeof(DateTime);
+            //dgvMissions.Columns[MyHelper.strDateActualEnd].ValueType = typeof(DateTime);
             dgvMissions.Columns[MyHelper.strMissionId].ValueType = typeof(int);
 
 
@@ -60,8 +60,8 @@ namespace DGVOutposts
                     dgvMissions.Rows.Add((string)reader["mission_description"],
                                          (int)reader["mission_id"],
                                          (int)reader["outpost_id"],
-                                         reader["date_begin"],
-                                         reader["date_plan_end"],
+                                         (DateTime)reader["date_begin"],
+                                         (DateTime)reader["date_plan_end"],
                                          reader["date_actual_end"]);
                 }
             }
@@ -88,6 +88,13 @@ namespace DGVOutposts
             else if ((cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd) && valueBegin != null)
             {
                 ((CalendarCell)cell).MyMinDate = ((DateTime)valueBegin).Date;
+            }
+            if (cell.OwningColumn.Name == MyHelper.strDateBegin && (valueBegin == null || valueBegin == DBNull.Value)
+                || cell.OwningColumn.Name == MyHelper.strDatePlanEnd && (valuePlanEnd == null || valuePlanEnd == DBNull.Value)
+                || cell.OwningColumn.Name == MyHelper.strDateActualEnd && (valueActual == null || valueActual == DBNull.Value))
+            {
+                dgvMissions.NotifyCurrentCellDirty(true);
+                //dgvMissions.NotifyCurrentCellDirty(false);
             }
         }
 
@@ -242,6 +249,7 @@ namespace DGVOutposts
             //    row.ErrorText = MyHelper.strBadRow + " Дата окончания не может быть меньше даты начала!";
             //    return;
             //}
+            MessageBox.Show("Фиксация...");
             try
             {
                 using (var sConn = new NpgsqlConnection(sConnStr))
@@ -286,6 +294,7 @@ namespace DGVOutposts
                         RETURNING mission_id;";
                         row.Cells[MyHelper.strMissionId].Value = sCommand.ExecuteScalar();
                     }
+                    dgvMissions.NotifyCurrentCellDirty(false);
                 }
             }
             catch (Exception err)
@@ -371,8 +380,9 @@ namespace DGVOutposts
             dgvMissions[mouseLocation.ColumnIndex, mouseLocation.RowIndex].Value = null;
 
             dgvMissions.NotifyCurrentCellDirty(true);
+            //dgvMissions.NotifyCurrentCellDirty(false);
 
-            dgvMissions_RowValidating(null, new DataGridViewCellCancelEventArgs(mouseLocation.ColumnIndex, mouseLocation.RowIndex));
+            //dgvMissions_RowValidating(null, new DataGridViewCellCancelEventArgs(mouseLocation.ColumnIndex, mouseLocation.RowIndex));
         }
 
         private void dgvMissions_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
