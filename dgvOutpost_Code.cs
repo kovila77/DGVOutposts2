@@ -156,33 +156,8 @@ namespace DGVOutposts
             else
                 return;
 
-            // Проверка уникальности строк
-            foreach (DataGridViewRow curRow in dgvOutposts.Rows)
-            {
-                if (!curRow.IsNewRow
-                    && curRow.Index != row.Index
-                    && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-                        == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
-                        == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
-                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
-                        == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
-                    && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
-                        == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
-                {
-                    //dgvOutposts.CancelEdit();
-                    MessageBox.Show($"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!");
-                    row.Cells[e.ColumnIndex].Value = oldCellValue;
-                    if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
-                    {
-                        cell.ErrorText = MyHelper.strEmptyCell;
-                        row.ErrorText = MyHelper.strBadRow;
-                    }
-                    //row.ErrorText = strExistingOutpostRow;
-                    return;
-                }
-            }
-            needCommit = true;
+
+            //needUniqueCheckAndCommitOutposts = true;
         }
 
         private void dgvOutposts_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -250,8 +225,43 @@ namespace DGVOutposts
             //        return;
             //    }
             //}
-            if (needCommit)
+            if (row.ErrorText == "")
             {
+                // Проверка уникальности строк
+                foreach (DataGridViewRow curRow in dgvOutposts.Rows)
+                {
+                    if (curRow.Cells[MyHelper.strOutpostId].Value != null
+                        //!curRow.IsNewRow
+                        && curRow.Index != row.Index
+                        && curRow.Cells[MyHelper.strOutpostName].Value != null
+                            && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+                                == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+                        && curRow.Cells[MyHelper.strOutpostCoordinateX].Value != null
+                            && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
+                                == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
+                        && curRow.Cells[MyHelper.strOutpostCoordinateY].Value != null
+                            && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
+                                == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
+                        && curRow.Cells[MyHelper.strOutpostCoordinateZ].Value != null
+                            && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
+                                == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
+                    {
+                        //dgvOutposts.CancelEdit();
+                        string eo = $"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
+                        MessageBox.Show(eo);
+                        row.Cells[e.ColumnIndex].Value = oldCellValue;
+                        if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
+                        {
+                            cell.ErrorText = MyHelper.strEmptyCell;
+                            row.ErrorText = MyHelper.strBadRow;
+                            row.ErrorText += " " + eo;
+
+                        }
+                        //row.ErrorText = strExistingOutpostRow;
+                        return;
+                    }
+                }
+
                 using (var sConn = new NpgsqlConnection(sConnStr))
                 {
                     sConn.Open();
@@ -304,7 +314,7 @@ namespace DGVOutposts
                                                     (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
                     }
                 }
-                needCommit = false;
+                needUniqueCheckAndCommitOutposts = false;
             }
         }
 

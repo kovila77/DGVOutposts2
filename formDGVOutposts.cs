@@ -18,7 +18,7 @@ namespace DGVOutposts
         //private bool rowCanBeCommitedDGVOutpost;
 
         //DataGridViewRow RowForDelete = null;
-        private bool needCommit;
+        private bool needUniqueCheckAndCommitOutposts;
         private object oldCellValue = false;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
@@ -100,15 +100,15 @@ namespace DGVOutposts
 
             if (cellFormatedValue == "")
             {
-                if (!IsEntireRowEmpty(cell.OwningRow, cell.OwningColumn.Index))
-                {
-                    //if (MessageBox.Show(MyHelper.strEmptyCell, "", MessageBoxButtons.YesNo) == DialogResult.OK)
-                    if (MessageBox.Show("Отменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        dgv.CancelEdit();
-                    else
-                        e.Cancel = true;
-                }
-                else
+                //if (IsEntireRowEmpty(cell.OwningRow, cell.OwningColumn.Index))
+                //{
+                //    //if (MessageBox.Show(MyHelper.strEmptyCell, "", MessageBoxButtons.YesNo) == DialogResult.OK)
+                //    if (MessageBox.Show("Отменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                //        dgv.CancelEdit();
+                //    else
+                //        e.Cancel = true;
+                //}
+                //else
                     dgv.CancelEdit();
                 return;
             }
@@ -116,7 +116,7 @@ namespace DGVOutposts
                 && dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32)
                 && !int.TryParse(cellFormatedValue, out t))
             {
-                if (MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\" + Отменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     dgv.CancelEdit();
                 }
