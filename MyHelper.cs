@@ -28,6 +28,9 @@ namespace DGVOutposts
         public static readonly string strDatePlanEnd = "date_plan_end";
         public static readonly string strDateActualEnd = "date_actual_end";
 
+
+        public static readonly string strUniqueOutpostConstraintName = "unique_outpost";
+
         public static string RmvExtrSpaces(this String str)
         {
             if (str == null) return str;

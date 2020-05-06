@@ -128,11 +128,12 @@
             this.dgvMissions.Name = "dgvMissions";
             this.dgvMissions.Size = new System.Drawing.Size(786, 394);
             this.dgvMissions.TabIndex = 0;
-            this.dgvMissions.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgv_CellBeginEdit);
+            this.dgvMissions.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMissions_CellBeginEdit);
             this.dgvMissions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellEndEdit);
             this.dgvMissions.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellMouseEnter);
             this.dgvMissions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgv_CellParsing);
             this.dgvMissions.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
+            this.dgvMissions.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMissions_RowValidating);
             this.dgvMissions.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvMissions_UserDeletingRow);
             this.dgvMissions.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgv_KeyUp);
             // 
@@ -141,12 +142,13 @@
             this.contextMenuStripNULL.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setNULLToolStripMenuItem});
             this.contextMenuStripNULL.Name = "contextMenuStrip1";
-            this.contextMenuStripNULL.Size = new System.Drawing.Size(123, 26);
+            this.contextMenuStripNULL.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStripNULL.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStrip_Opening);
             // 
             // setNULLToolStripMenuItem
             // 
             this.setNULLToolStripMenuItem.Name = "setNULLToolStripMenuItem";
-            this.setNULLToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.setNULLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setNULLToolStripMenuItem.Text = "Set NULL";
             this.setNULLToolStripMenuItem.Click += new System.EventHandler(this.setNULLToolStripMenuItem_Click);
             // 

@@ -36,6 +36,8 @@ namespace DGVOutposts
 
     public class CalendarCell : DataGridViewTextBoxCell
     {
+        public DateTime? MyMinDate = null;
+        public DateTime? MyMaxDate = null;
 
         public CalendarCell()
             : base()
@@ -53,6 +55,15 @@ namespace DGVOutposts
                 dataGridViewCellStyle);
             CalendarEditingControl ctl =
                 DataGridView.EditingControl as CalendarEditingControl;
+            if (MyMinDate.HasValue)
+                ctl.MinDate = MyMinDate.Value;
+            else
+                ctl.MinDate = DateTimePicker.MinimumDateTime;
+            if (MyMaxDate.HasValue)
+                ctl.MaxDate = MyMaxDate.Value;
+            else
+                ctl.MaxDate = DateTimePicker.MaximumDateTime;
+
             // Use the default row value when Value property is null.
             try
             {
@@ -67,7 +78,8 @@ namespace DGVOutposts
                 //ctl.Value = (DateTime)this.Value; 
                 if (this.Value == null || this.Value == DBNull.Value)
                 {
-                    ctl.Value = DateTime.Now;
+                    //ctl.Value = DateTime.Now;
+                    ctl.Value = ctl.MinDate.Date > DateTime.Now.Date ? ctl.MinDate.Date : ( ctl.MaxDate.Date < DateTime.Now.Date ? ctl.MaxDate.Date : DateTime.Now.Date);
                     this.Value = ctl.Value;
                     //this.DataGridView.CurrentCell.Value = ctl.Value;
                     //this.DataGridView.NotifyCurrentCellDirty(true);
@@ -152,7 +164,8 @@ namespace DGVOutposts
                         // In the case of an exception, just use the 
                         // default value so we're not left with a null
                         // value.
-                        this.Value = DateTime.Now;
+                        this.Value = this.Value = this.MinDate.Date > DateTime.Now.Date ? this.MinDate.Date : (this.MaxDate.Date < DateTime.Now.Date ? this.MaxDate.Date : DateTime.Now.Date);
+                        //this.Value = this.MinDate.Date > DateTime.Now.Date ? this.MinDate.Date : DateTime.Now.Date;
                     }
                 }
             }

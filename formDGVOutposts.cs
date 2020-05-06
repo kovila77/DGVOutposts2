@@ -22,7 +22,7 @@ namespace DGVOutposts
         private object oldCellValue = false;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
-        private delegate void RowCheck(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e);
+        //private delegate void RowCheck(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e);
 
         private readonly string sConnStr = new NpgsqlConnectionStringBuilder
         {
@@ -36,8 +36,8 @@ namespace DGVOutposts
         public formDGVOutposts()
         {
             InitializeComponent();
-            dgvOutposts.Tag = new RowCheck(dgvOutposts_RowEmtpyCellChecking);
-            dgvMissions.Tag = new RowCheck(dgvMission_RowEmtpyCellChecking);
+            //dgvOutposts.Tag = new RowCheck(dgvOutposts_RowEmtpyCellChecking);
+            //dgvMissions.Tag = new RowCheck(dgvMission_RowEmtpyCellChecking);
             //dgvOutposts.Tag = new RowCheck(dgvOutposts_RowChecking);
             InitializeDGVOutposts();
             InitializeDGVMissions();
@@ -69,12 +69,12 @@ namespace DGVOutposts
 
         private void dgv_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if (sender == null) return;
-            DataGridView dgv = null;
-            try { dgv = (DataGridView)sender; }
-            catch { return; }
+            //if (sender == null) return;
+            //DataGridView dgv = null;
+            //try { dgv = (DataGridView)sender; }
+            //catch { return; }
 
-            oldCellValue = dgv[e.ColumnIndex, e.RowIndex].Value;
+            //oldCellValue = dgv[e.ColumnIndex, e.RowIndex].Value;
         }
 
         private bool IsEntireRowEmpty(DataGridViewRow row, int columnIndexNotBeLook)
@@ -94,33 +94,62 @@ namespace DGVOutposts
             catch { return; }
             if (dgv.Rows[e.RowIndex].IsNewRow || !dgv[e.ColumnIndex, e.RowIndex].IsInEditMode) return;
 
-
             var cell = dgv[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = e.FormattedValue.ToString().RmvExtrSpaces();
             int t;
-            
-            if (cellFormatedValue == "")
-            {
-                dgv.CancelEdit();
-                return;
-            }
-            else if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
+
+            if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
                 && dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32)
                 && !int.TryParse(cellFormatedValue, out t))
             {
-                if (MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
+                if (cellFormatedValue == "" || MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     dgv.CancelEdit();
-                }
-                else e.Cancel = true;
+                else
+                    e.Cancel = true;
                 return;
             }
             else
             {
                 cell.ErrorText = "";
-                ((RowCheck)dgv.Tag).Invoke(cell, ref e);
             }
         }
+
+        //private void dgv_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        //{
+        //    //var row = dgvOutposts.Rows[e.RowIndex];
+        //    if (sender == null) return;
+        //    DataGridView dgv = null;
+        //    try { dgv = (DataGridView)sender; }
+        //    catch { return; }
+        //    if (dgv.Rows[e.RowIndex].IsNewRow || !dgv[e.ColumnIndex, e.RowIndex].IsInEditMode) return;
+
+
+        //    var cell = dgv[e.ColumnIndex, e.RowIndex];
+        //    var cellFormatedValue = e.FormattedValue.ToString().RmvExtrSpaces();
+        //    int t;
+
+        //    if (cellFormatedValue == "")
+        //    {
+        //        dgv.CancelEdit();
+        //        return;
+        //    }
+        //    else if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
+        //        && dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32)
+        //        && !int.TryParse(cellFormatedValue, out t))
+        //    {
+        //        if (MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+        //        {
+        //            dgv.CancelEdit();
+        //        }
+        //        else e.Cancel = true;
+        //        return;
+        //    }
+        //    else
+        //    {
+        //        cell.ErrorText = "";
+        //        ((RowCheck)dgv.Tag).Invoke(cell, ref e);
+        //    }
+        //}
 
         private void dgv_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {

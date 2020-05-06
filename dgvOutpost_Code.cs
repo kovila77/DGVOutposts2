@@ -128,33 +128,33 @@ namespace DGVOutposts
 
         private void dgvOutposts_RowEmtpyCellChecking(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e)
         {
-            var row = cell.OwningRow;
-            var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
+            //var row = cell.OwningRow;
+            // var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
 
-            // Проверка можно ли фиксировать строку
-            var cellsWithPotentialErrors = new List<DataGridViewCell> {
-                                                   row.Cells[MyHelper.strOutpostName],
-                                                   row.Cells[MyHelper.strOutpostEconomicValue],
-                                                   row.Cells[MyHelper.strOutpostCoordinateX],
-                                                   row.Cells[MyHelper.strOutpostCoordinateY],
-                                                   row.Cells[MyHelper.strOutpostCoordinateZ],
-                                                 };
-            foreach (var cellWithPotentialError in cellsWithPotentialErrors)
-            {
-                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "" && cellWithPotentialError.ColumnIndex != cell.ColumnIndex)
-                {
-                    cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
-                    row.ErrorText = MyHelper.strBadRow;
-                }
-                else
-                {
-                    cellWithPotentialError.ErrorText = "";
-                }
-            }
-            if (cellsWithPotentialErrors.FirstOrDefault(cellWithPotentialError => cellWithPotentialError.ErrorText.Length > 0) == null)
-                row.ErrorText = "";
-            else
-                return;
+            //// Проверка можно ли фиксировать строку
+            //var cellsWithPotentialErrors = new List<DataGridViewCell> {
+            //                                       row.Cells[MyHelper.strOutpostName],
+            //                                       row.Cells[MyHelper.strOutpostEconomicValue],
+            //                                       row.Cells[MyHelper.strOutpostCoordinateX],
+            //                                       row.Cells[MyHelper.strOutpostCoordinateY],
+            //                                       row.Cells[MyHelper.strOutpostCoordinateZ],
+            //                                     };
+            //foreach (var cellWithPotentialError in cellsWithPotentialErrors)
+            //{
+            //    if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "" && cellWithPotentialError.ColumnIndex != cell.ColumnIndex)
+            //    {
+            //        cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
+            //        row.ErrorText = MyHelper.strBadRow;
+            //    }
+            //    else
+            //    {
+            //        cellWithPotentialError.ErrorText = "";
+            //    }
+            //}
+            //if (cellsWithPotentialErrors.FirstOrDefault(cellWithPotentialError => cellWithPotentialError.ErrorText.Length > 0) == null)
+            //    row.ErrorText = "";
+            //else
+            //    return;
         }
 
         private void dgvOutposts_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -162,7 +162,7 @@ namespace DGVOutposts
             if (dgvOutposts.Rows[e.RowIndex].IsNewRow
                 || !dgvOutposts.Columns[e.ColumnIndex].Visible) return;
 
-            var row = dgvOutposts.Rows[e.RowIndex];
+            //var row = dgvOutposts.Rows[e.RowIndex];
             var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
 
@@ -222,40 +222,161 @@ namespace DGVOutposts
             //        return;
             //    }
             //}
-            if (row.ErrorText == "")
-            {
-                // Проверка уникальности строк
-                foreach (DataGridViewRow curRow in dgvOutposts.Rows)
-                {
-                    if (curRow.Cells[MyHelper.strOutpostId].Value != null
-                        //!curRow.IsNewRow
-                        && curRow.Index != row.Index
-                        && curRow.Cells[MyHelper.strOutpostName].Value != null
-                            && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-                                == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
-                        && curRow.Cells[MyHelper.strOutpostCoordinateX].Value != null
-                            && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
-                                == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
-                        && curRow.Cells[MyHelper.strOutpostCoordinateY].Value != null
-                            && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
-                                == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
-                        && curRow.Cells[MyHelper.strOutpostCoordinateZ].Value != null
-                            && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
-                                == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
-                    {
-                        string eo = $"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
-                        MessageBox.Show(eo);
-                        row.Cells[e.ColumnIndex].Value = oldCellValue;
-                        if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
-                        {
-                            cell.ErrorText = MyHelper.strEmptyCell;
-                            row.ErrorText = MyHelper.strBadRow;
-                            row.ErrorText += " " + eo;
-                        }
-                        return;
-                    }
-                }
+            //if (row.ErrorText == "")
+            //{
+            //    // Проверка уникальности строк
+            //    foreach (DataGridViewRow curRow in dgvOutposts.Rows)
+            //    {
+            //        if (curRow.Cells[MyHelper.strOutpostId].Value != null
+            //            //!curRow.IsNewRow
+            //            && curRow.Index != row.Index
+            //            && curRow.Cells[MyHelper.strOutpostName].Value != null
+            //                && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+            //                    == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+            //            && curRow.Cells[MyHelper.strOutpostCoordinateX].Value != null
+            //                && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
+            //                    == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
+            //            && curRow.Cells[MyHelper.strOutpostCoordinateY].Value != null
+            //                && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
+            //                    == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
+            //            && curRow.Cells[MyHelper.strOutpostCoordinateZ].Value != null
+            //                && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
+            //                    == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
+            //        {
+            //            string eo = $"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
+            //            MessageBox.Show(eo);
+            //            row.Cells[e.ColumnIndex].Value = oldCellValue;
+            //            if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
+            //            {
+            //                cell.ErrorText = MyHelper.strEmptyCell;
+            //                row.ErrorText = MyHelper.strBadRow;
+            //                row.ErrorText += " " + eo;
+            //            }
+            //            return;
+            //        }
+            //    }
 
+            //    using (var sConn = new NpgsqlConnection(sConnStr))
+            //    {
+            //        sConn.Open();
+            //        var sCommand = new NpgsqlCommand
+            //        {
+            //            Connection = sConn
+            //        };
+            //        sCommand.Parameters.AddWithValue("outpost_name", row.Cells[MyHelper.strOutpostName].Value.ToString());
+            //        sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[MyHelper.strOutpostEconomicValue].Value);
+            //        sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[MyHelper.strOutpostCoordinateX].Value);
+            //        sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[MyHelper.strOutpostCoordinateY].Value);
+            //        sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+            //        if (row.Cells[MyHelper.strOutpostId].FormattedValue.ToString().Trim().Length > 0)
+            //        {
+            //            sCommand.CommandText = @"
+            //                UPDATE outposts
+            //                SET outpost_name           = @outpost_name,
+            //                    outpost_economic_value = @outpost_economic_value,
+            //                    outpost_coordinate_x   = @outpost_coordinate_x,
+            //                    outpost_coordinate_y   = @outpost_coordinate_y,
+            //                    outpost_coordinate_z   = @outpost_coordinate_z
+            //                WHERE outpost_id = @outpost_id;";
+            //            sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[MyHelper.strOutpostId].Value);
+            //            sCommand.ExecuteNonQuery();
+            //            _comboBoxColumnOutpost.Change((int)row.Cells[MyHelper.strOutpostId].Value,
+            //                                        row.Cells[MyHelper.strOutpostName].Value.ToString(),
+            //                                        (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
+            //                                        (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
+            //                                        (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+            //        }
+            //        else
+            //        {
+            //            sCommand.CommandText = @"
+            //                INSERT INTO outposts (outpost_name,
+            //                                      outpost_economic_value,
+            //                                      outpost_coordinate_x,
+            //                                      outpost_coordinate_y,
+            //                                      outpost_coordinate_z)
+            //                VALUES (@outpost_name,
+            //                        @outpost_economic_value,
+            //                        @outpost_coordinate_x,
+            //                        @outpost_coordinate_y,
+            //                        @outpost_coordinate_z)
+            //                RETURNING outpost_id;";
+            //            row.Cells[MyHelper.strOutpostId].Value = sCommand.ExecuteScalar();
+            //            _comboBoxColumnOutpost.Add((int)row.Cells[MyHelper.strOutpostId].Value,
+            //                                        row.Cells[MyHelper.strOutpostName].Value.ToString(),
+            //                                        (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
+            //                                        (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
+            //                                        (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+            //        }
+            //    }
+            //}
+        }
+
+        private void dgvOutposts_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            var row = dgvOutposts.Rows[e.RowIndex];
+            if (row.IsNewRow || !dgvOutposts.IsCurrentRowDirty) return;
+            //var cell = dgvOutposts[e.ColumnIndex, e.RowIndex];
+            //var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
+
+            // Проверка можно ли фиксировать строку
+            var cellsWithPotentialErrors = new List<DataGridViewCell> {
+                                                   row.Cells[MyHelper.strOutpostName],
+                                                   row.Cells[MyHelper.strOutpostEconomicValue],
+                                                   row.Cells[MyHelper.strOutpostCoordinateX],
+                                                   row.Cells[MyHelper.strOutpostCoordinateY],
+                                                   row.Cells[MyHelper.strOutpostCoordinateZ],
+                                                 };
+            foreach (var cellWithPotentialError in cellsWithPotentialErrors)
+            {
+                if (cellWithPotentialError.FormattedValue.ToString().RmvExtrSpaces() == "")
+                {
+                    cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
+                    row.ErrorText = MyHelper.strBadRow;
+                }
+                else
+                {
+                    cellWithPotentialError.ErrorText = "";
+                }
+            }
+            if (cellsWithPotentialErrors.FirstOrDefault(cellWithPotentialError => cellWithPotentialError.ErrorText.Length > 0) == null)
+                row.ErrorText = "";
+            else
+                return;
+
+
+            //// Проверка уникальности строк
+            //foreach (DataGridViewRow curRow in dgvOutposts.Rows)
+            //{
+            //    if (curRow.Cells[MyHelper.strOutpostId].Value != null
+            //        //!curRow.IsNewRow
+            //        && curRow.Index != row.Index
+            //        && curRow.Cells[MyHelper.strOutpostName].Value != null
+            //            && curRow.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+            //                == row.Cells[MyHelper.strOutpostName].FormattedValue.ToString().RmvExtrSpaces()
+            //        && curRow.Cells[MyHelper.strOutpostCoordinateX].Value != null
+            //            && (int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value
+            //                == (int)row.Cells[MyHelper.strOutpostCoordinateX].Value
+            //        && curRow.Cells[MyHelper.strOutpostCoordinateY].Value != null
+            //            && (int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value
+            //                == (int)row.Cells[MyHelper.strOutpostCoordinateY].Value
+            //        && curRow.Cells[MyHelper.strOutpostCoordinateZ].Value != null
+            //            && (int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value
+            //                == (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value)
+            //    {
+            //        string eo = $"Форпост {curRow.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)curRow.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)curRow.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
+            //        MessageBox.Show(eo);
+            //        row.Cells[e.ColumnIndex].Value = oldCellValue;
+            //        if (oldCellValue == null || oldCellValue.ToString().RmvExtrSpaces() == "")
+            //        {
+            //            cell.ErrorText = MyHelper.strEmptyCell;
+            //            row.ErrorText = MyHelper.strBadRow;
+            //            row.ErrorText += " " + eo;
+            //        }
+            //        return;
+            //    }
+            //}
+            try
+            {
                 using (var sConn = new NpgsqlConnection(sConnStr))
                 {
                     sConn.Open();
@@ -300,34 +421,42 @@ namespace DGVOutposts
                                     @outpost_coordinate_y,
                                     @outpost_coordinate_z)
                             RETURNING outpost_id;";
+
                         row.Cells[MyHelper.strOutpostId].Value = sCommand.ExecuteScalar();
+
                         _comboBoxColumnOutpost.Add((int)row.Cells[MyHelper.strOutpostId].Value,
                                                     row.Cells[MyHelper.strOutpostName].Value.ToString(),
                                                     (int)row.Cells[MyHelper.strOutpostCoordinateX].Value,
                                                     (int)row.Cells[MyHelper.strOutpostCoordinateY].Value,
                                                     (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+
                     }
                 }
             }
-        }
-
-        private void dgvOutposts_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
-        {
-            //var row = dgvOutposts.Rows[e.RowIndex];
-            //if (MyHelper.IsEntireRowEmpty(row))
-            //{
-            //    //dgvOutposts.Rows.Remove(row);
-            //    RowForDelete = row;
-            //}
+            catch (PostgresException err)
+            {
+                if (err.ConstraintName == MyHelper.strUniqueOutpostConstraintName)
+                {
+                    string eo = $"Форпост {row.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)row.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)row.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)row.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
+                    MessageBox.Show(eo);
+                    row.ErrorText = MyHelper.strBadRow + " " + eo;
+                }
+                else
+                {
+                    throw err;
+                }
+            }
+            catch (Exception err2)
+            {
+                MessageBox.Show(err2.Message);
+            }
         }
 
         private void dgvOutposts_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-            //if (RowForDelete != null)
+            //if (MyHelper.IsEntireRowEmpty(dgvOutposts.Rows[e.RowIndex]))
             //{
-            //    dgvOutposts.
-            //    dgvOutposts.Rows.Remove(RowForDelete);
-            //    RowForDelete = null;
+            //    dgvOutposts.Rows.Remove(dgvOutposts.Rows[e.RowIndex]);
             //}
         }
 
@@ -345,31 +474,38 @@ namespace DGVOutposts
 
         private void dgvOutposts_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (!(e.Row.Cells[MyHelper.strOutpostId].Value is null) /*&& e.row.cells["id"].value != dbnull.value*/)
+            if (e.Row.Cells[MyHelper.strOutpostId].Value != null /*&& e.row.cells["id"].value != dbnull.value*/)
             {
-                var outpost_id = (int)e.Row.Cells[MyHelper.strOutpostId].Value;
-                //DataGridViewCell cell;
-                //for (int i = 0; i < dgvmissions.rows.count - 1; i++)
-                //{
-                //    cell = dgvmissions.rows[i].cells["outpost_id"];
-                //    if (cell.Value != null && cell.value != dbnull.value && (int)cell.value == id)
-                //    {
-                //        MessageBox.Show("данный форпост связан с миссией! измените или удалите миссию!");
-                //        e.Cancel = true;
-                //        return;
-                //    }
-                //}
-                using (var sconn = new NpgsqlConnection(sConnStr))
+                try
                 {
-                    sconn.Open();
-                    var scommand = new NpgsqlCommand
+                    var outpost_id = (int)e.Row.Cells[MyHelper.strOutpostId].Value;
+                    //DataGridViewCell cell;
+                    //for (int i = 0; i < dgvmissions.rows.count - 1; i++)
+                    //{
+                    //    cell = dgvmissions.rows[i].cells["outpost_id"];
+                    //    if (cell.Value != null && cell.value != dbnull.value && (int)cell.value == id)
+                    //    {
+                    //        MessageBox.Show("данный форпост связан с миссией! измените или удалите миссию!");
+                    //        e.Cancel = true;
+                    //        return;
+                    //    }
+                    //}
+                    using (var sconn = new NpgsqlConnection(sConnStr))
                     {
-                        Connection = sconn,
-                        CommandText = "delete from outposts where outpost_id = @outpost_id"
-                    };
-                    scommand.Parameters.AddWithValue("outpost_id", outpost_id);
-                    scommand.ExecuteNonQuery();
-                    _comboBoxColumnOutpost.Remove(outpost_id);
+                        sconn.Open();
+                        var scommand = new NpgsqlCommand
+                        {
+                            Connection = sconn,
+                            CommandText = "delete from outposts where outpost_id = @outpost_id"
+                        };
+                        scommand.Parameters.AddWithValue("outpost_id", outpost_id);
+                        scommand.ExecuteNonQuery();
+                        _comboBoxColumnOutpost.Remove(outpost_id);
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show(err.Message);
                 }
             }
         }
