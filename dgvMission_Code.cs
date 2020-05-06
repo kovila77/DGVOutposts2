@@ -36,9 +36,14 @@ namespace DGVOutposts
             dgvMissions.Columns[MyHelper.strMissionId].Visible = false;
 
             dgvMissions.Columns[MyHelper.strOutpostId].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            //dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Automatic;
+            //dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Automatic;
+            //dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Programmatic;
+            dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Programmatic;
+            dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.Programmatic;
+            dgvMissions.ColumnHeaderMouseClick += DgvMissions_ColumnHeaderMouseClick;
 
             using (var sConn = new NpgsqlConnection(sConnStr))
             {
@@ -67,6 +72,72 @@ namespace DGVOutposts
             }
         }
 
+        private void DgvMissions_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+
+            if (dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDateBegin
+                || dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDatePlanEnd
+                || dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDateActualEnd)
+            {
+                if (dgvMissions.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection == SortOrder.Ascending)
+                {
+                    dgvMissions.Sort(new RowComparer(SortOrder.Descending, e.ColumnIndex));
+                    dgvMissions.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                }
+                else
+                {
+                    dgvMissions.Sort(new RowComparer(SortOrder.Ascending, e.ColumnIndex));
+                    dgvMissions.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                }
+            }
+            foreach (DataGridViewColumn column in dgvMissions.Columns)
+            {
+                if (column.Index == e.ColumnIndex) continue;
+                column.HeaderCell.SortGlyphDirection = SortOrder.None;
+            }
+        }
+
+        private class RowComparer : System.Collections.IComparer
+        {
+            private static int sortOrderModifier = 1;
+            private int columnIndex;
+
+            public RowComparer(SortOrder sortOrder, int columnIndex)
+            {
+                this.columnIndex = columnIndex;
+                if (sortOrder == SortOrder.Descending)
+                {
+                    sortOrderModifier = -1;
+                }
+                else if (sortOrder == SortOrder.Ascending)
+                {
+                    sortOrderModifier = 1;
+                }
+            }
+
+            public int Compare(object x, object y)
+            {
+                DataGridViewRow row1 = (DataGridViewRow)x;
+                DataGridViewRow row2 = (DataGridViewRow)y;
+
+                // Try to sort based on the Last Name column.
+                int CompareResult = 0;
+                if (row1.Cells[columnIndex].Value != DBNull.Value && row1.Cells[columnIndex].Value != null && row2.Cells[columnIndex].Value != DBNull.Value && row2.Cells[columnIndex].Value != null)
+                {
+                    CompareResult = DateTime.Compare((DateTime)row1.Cells[columnIndex].Value, (DateTime)row2.Cells[columnIndex].Value);
+                }
+                else if (row1.Cells[columnIndex].Value != DBNull.Value && row1.Cells[columnIndex].Value != null)
+                {
+                    CompareResult = 1;
+                }
+                else if (row2.Cells[columnIndex].Value != DBNull.Value && row2.Cells[columnIndex].Value != null)
+                {
+                    CompareResult = -1;
+                }
+
+                return CompareResult * sortOrderModifier;
+            }
+        }
 
         private void dgvMissions_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
