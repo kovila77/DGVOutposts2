@@ -22,6 +22,7 @@ namespace DGVOutposts
         private object oldCellValue = false;
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
 
+
         //private delegate void RowCheck(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e);
 
         private readonly string sConnStr = new NpgsqlConnectionStringBuilder

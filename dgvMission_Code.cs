@@ -27,8 +27,8 @@ namespace DGVOutposts
 
             dgvMissions.Columns[MyHelper.strMissionDescription].ValueType = typeof(string);
             dgvMissions.Columns[MyHelper.strOutpostId].ValueType = typeof(int);
-            dgvMissions.Columns[MyHelper.strDateBegin].ValueType = typeof(DateTime);
-            dgvMissions.Columns[MyHelper.strDatePlanEnd].ValueType = typeof(DateTime);
+            //dgvMissions.Columns[MyHelper.strDateBegin].ValueType = typeof(DateTime);
+            //dgvMissions.Columns[MyHelper.strDatePlanEnd].ValueType = typeof(DateTime);
             //dgvMissions.Columns[MyHelper.strDateActualEnd].ValueType = typeof(DateTime);
             dgvMissions.Columns[MyHelper.strMissionId].ValueType = typeof(int);
 
@@ -60,8 +60,8 @@ namespace DGVOutposts
                     dgvMissions.Rows.Add((string)reader["mission_description"],
                                          (int)reader["mission_id"],
                                          (int)reader["outpost_id"],
-                                         (DateTime)reader["date_begin"],
-                                         (DateTime)reader["date_plan_end"],
+                                         reader["date_begin"],
+                                         reader["date_plan_end"],
                                          reader["date_actual_end"]);
                 }
             }
@@ -77,25 +77,26 @@ namespace DGVOutposts
             var valueActual = dgvMissions[MyHelper.strDateActualEnd, e.RowIndex].Value;
             if (cell.OwningColumn.Name == MyHelper.strDateBegin)
             {
-                if (valuePlanEnd != null && valueActual != null)
+                if (valuePlanEnd != null && valuePlanEnd != DBNull.Value && valueActual != null && valueActual != DBNull.Value)
                     ((CalendarCell)cell).MyMaxDate = ((DateTime)valuePlanEnd).Date > ((DateTime)valueActual).Date
                         ? ((DateTime)valueActual).Date : ((DateTime)valuePlanEnd).Date;
-                else if (valuePlanEnd != null)
+                else if (valuePlanEnd != null && valuePlanEnd != DBNull.Value)
                     ((CalendarCell)cell).MyMaxDate = ((DateTime)valuePlanEnd).Date;
-                else if (valueActual != null)
+                else if (valueActual != null && valueActual != DBNull.Value)
                     ((CalendarCell)cell).MyMaxDate = ((DateTime)valueActual).Date;
             }
-            else if ((cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd) && valueBegin != null)
+            else if ((cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd) && valueBegin != null && valueBegin != DBNull.Value)
             {
                 ((CalendarCell)cell).MyMinDate = ((DateTime)valueBegin).Date;
             }
-            if (cell.OwningColumn.Name == MyHelper.strDateBegin && (valueBegin == null || valueBegin == DBNull.Value)
-                || cell.OwningColumn.Name == MyHelper.strDatePlanEnd && (valuePlanEnd == null || valuePlanEnd == DBNull.Value)
-                || cell.OwningColumn.Name == MyHelper.strDateActualEnd && (valueActual == null || valueActual == DBNull.Value))
-            {
-                dgvMissions.NotifyCurrentCellDirty(true);
-                //dgvMissions.NotifyCurrentCellDirty(false);
-            }
+            //return;
+            //if (cell.OwningColumn.Name == MyHelper.strDateBegin && (valueBegin == null || valueBegin == DBNull.Value)
+            //    || cell.OwningColumn.Name == MyHelper.strDatePlanEnd && (valuePlanEnd == null || valuePlanEnd == DBNull.Value)
+            //    || cell.OwningColumn.Name == MyHelper.strDateActualEnd && (valueActual == null || valueActual == DBNull.Value))
+            //{
+            //    dgvMissions.NotifyCurrentCellDirty(true);
+            //    //dgvMissions.NotifyCurrentCellDirty(false);
+            //}
         }
 
         private void dgvMissions_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
@@ -211,7 +212,8 @@ namespace DGVOutposts
         private void dgvMissions_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
         {
             var row = dgvMissions.Rows[e.RowIndex];
-            if (row.IsNewRow || !dgvMissions.IsCurrentRowDirty) return;
+            if ((row.IsNewRow || !dgvMissions.IsCurrentRowDirty) && sender != contextMenuStripNULL)
+                return;
 
 
             // Проверка можно ли фиксировать строку
@@ -294,7 +296,7 @@ namespace DGVOutposts
                         RETURNING mission_id;";
                         row.Cells[MyHelper.strMissionId].Value = sCommand.ExecuteScalar();
                     }
-                    dgvMissions.NotifyCurrentCellDirty(false);
+                    //dgvMissions.NotifyCurrentCellDirty(false);
                 }
             }
             catch (Exception err)
@@ -377,12 +379,10 @@ namespace DGVOutposts
 
         private void setNULLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dgvMissions[mouseLocation.ColumnIndex, mouseLocation.RowIndex].Value = null;
-
-            dgvMissions.NotifyCurrentCellDirty(true);
+            dgvMissions[mouseLocation.ColumnIndex, mouseLocation.RowIndex].Value = DBNull.Value;
+            //dgvMissions.NotifyCurrentCellDirty(true);
             //dgvMissions.NotifyCurrentCellDirty(false);
-
-            //dgvMissions_RowValidating(null, new DataGridViewCellCancelEventArgs(mouseLocation.ColumnIndex, mouseLocation.RowIndex));
+            dgvMissions_RowValidating(contextMenuStripNULL, new DataGridViewCellCancelEventArgs(mouseLocation.ColumnIndex, mouseLocation.RowIndex));
         }
 
         private void dgvMissions_CellMouseEnter(object sender, DataGridViewCellEventArgs e)

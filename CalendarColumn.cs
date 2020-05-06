@@ -55,6 +55,9 @@ namespace DGVOutposts
                 dataGridViewCellStyle);
             CalendarEditingControl ctl =
                 DataGridView.EditingControl as CalendarEditingControl;
+
+            DateTime cellValue;
+
             if (MyMinDate.HasValue)
                 ctl.MinDate = MyMinDate.Value;
             else
@@ -64,34 +67,22 @@ namespace DGVOutposts
             else
                 ctl.MaxDate = DateTimePicker.MaximumDateTime;
 
-            // Use the default row value when Value property is null.
-            try
+            if (this.Value == null || this.Value == DBNull.Value)
             {
-                //if (this.Value == null)
-                // {
-                //  ctl.Value = (DateTime)this.DefaultNewRowValue;
-                //  ctl.Value = DateTime.Now;
-                //  this.Value = ctl.Value;
-                //}
-                // else
-                //{
-                //ctl.Value = (DateTime)this.Value; 
-                if (this.Value == null || this.Value == DBNull.Value)
-                {
-                    //ctl.Value = DateTime.Now;
-                    ctl.Value = ctl.MinDate.Date > DateTime.Now.Date ? ctl.MinDate.Date : ( ctl.MaxDate.Date < DateTime.Now.Date ? ctl.MaxDate.Date : DateTime.Now.Date);
-                    this.Value = ctl.Value;
-                    //this.DataGridView.CurrentCell.Value = ctl.Value;
-                    //this.DataGridView.NotifyCurrentCellDirty(true);
-                }
-                else
-                {
-                    ctl.Value = (DateTime)this.Value;
-                }
-                //}
+                cellValue = ctl.MinDate.Date > DateTime.Now.Date ? ctl.MinDate.Date : (ctl.MaxDate.Date < DateTime.Now.Date ? ctl.MaxDate.Date : DateTime.Now.Date);
+                //this.Value = DBNull.Value;
             }
-            catch (Exception e)
-            { MessageBox.Show(e.Message); }
+            else
+            {
+                cellValue = (DateTime)this.Value;
+            }
+
+            //ctl.EditingControlValueChanged = false;
+
+            ctl.LookForChanges = false;
+            ctl.Value = ctl.MinDate == cellValue ? ctl.MaxDate : ctl.MinDate;
+            ctl.LookForChanges = true;
+            ctl.cellValue = cellValue;
         }
 
         public override Type EditType
@@ -120,7 +111,7 @@ namespace DGVOutposts
                 // Use the current date and time as the default value.
                 // return DateTime.Now;
                 //return null;
-                return null;
+                return DBNull.Value;
                 //return DBNull.Value;
             }
         }
@@ -131,14 +122,12 @@ namespace DGVOutposts
         DataGridView dataGridView;
         private bool valueChanged = false;
         int rowIndex;
+        private bool lookForChanges;
+        public DateTime cellValue;
 
         public CalendarEditingControl()
         {
             this.Format = DateTimePickerFormat.Short;
-            //this.EditingControlValueChanged = true;
-            //this.OnValueChanged(new EventArgs());
-
-            //valueChanged = true;
         }
 
         // Implements the IDataGridViewEditingControl.EditingControlFormattedValue 
@@ -165,7 +154,6 @@ namespace DGVOutposts
                         // default value so we're not left with a null
                         // value.
                         this.Value = this.Value = this.MinDate.Date > DateTime.Now.Date ? this.MinDate.Date : (this.MaxDate.Date < DateTime.Now.Date ? this.MaxDate.Date : DateTime.Now.Date);
-                        //this.Value = this.MinDate.Date > DateTime.Now.Date ? this.MinDate.Date : DateTime.Now.Date;
                     }
                 }
             }
@@ -177,7 +165,6 @@ namespace DGVOutposts
             DataGridViewDataErrorContexts context)
         {
             return EditingControlFormattedValue;
-            //return this.Value == null ? "" : EditingControlFormattedValue;
         }
 
         // Implements the 
@@ -231,6 +218,8 @@ namespace DGVOutposts
         public void PrepareEditingControlForEdit(bool selectAll)
         {
             // No preparation needs to be done.
+            //this.Value = cellValue;
+            this.Value = cellValue;
         }
 
         // Implements the IDataGridViewEditingControl
@@ -281,13 +270,74 @@ namespace DGVOutposts
             }
         }
 
+        public bool LookForChanges
+        {
+            get
+            {
+                return lookForChanges;
+            }
+            set
+            {
+                lookForChanges = value;
+            }
+        }
+
+        //public DateTime CellValue
+        //{
+        //    get
+        //    {
+        //        return cellValue;
+        //    }
+        //    set
+        //    {
+        //        cellValue = value;
+        //    }
+        //}
+
         protected override void OnValueChanged(EventArgs eventargs)
         {
             // Notify the DataGridView that the contents of the cell
             // have changed.
-            valueChanged = true;
-            this.EditingControlDataGridView.NotifyCurrentCellDirty(true);
-            base.OnValueChanged(eventargs);
+            if (LookForChanges)
+            {
+                //valueChanged = true;
+                //this.EditingControlDataGridView.NotifyCurrentCellDirty(false);
+                //this.EditingControlDataGridView.CurrentCell.Value = this.Value;
+                this.EditingControlDataGridView.NotifyCurrentCellDirty(true);
+                base.OnValueChanged(eventargs);
+            }
+        }
+    }
+
+    class tresh : IDataGridViewEditingControl
+    {
+        public DataGridView EditingControlDataGridView { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public object EditingControlFormattedValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int EditingControlRowIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool EditingControlValueChanged { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public Cursor EditingPanelCursor => throw new NotImplementedException();
+
+        public bool RepositionEditingControlOnValueChange => throw new NotImplementedException();
+
+        public void ApplyCellStyleToEditingControl(DataGridViewCellStyle dataGridViewCellStyle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EditingControlWantsInputKey(Keys keyData, bool dataGridViewWantsInputKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetEditingControlFormattedValue(DataGridViewDataErrorContexts context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PrepareEditingControlForEdit(bool selectAll)
+        {
+            throw new NotImplementedException();
         }
     }
 }
