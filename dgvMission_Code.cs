@@ -35,11 +35,12 @@ namespace DGVOutposts
 
             dgvMissions.Columns[MyHelper.strMissionId].Visible = false;
 
-            dgvMissions.Columns[MyHelper.strOutpostId].SortMode = DataGridViewColumnSortMode.Automatic;
+            dgvMissions.Columns[MyHelper.strOutpostId].SortMode = DataGridViewColumnSortMode.Programmatic;
 
             dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Programmatic;
             dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Programmatic;
             dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.Programmatic;
+            dgvMissions.ColumnHeaderMouseClick -= DgvMissions_ColumnHeaderMouseClick;
             dgvMissions.ColumnHeaderMouseClick += DgvMissions_ColumnHeaderMouseClick;
 
             using (var sConn = new NpgsqlConnection(sConnStr))
@@ -74,16 +75,23 @@ namespace DGVOutposts
 
             if (dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDateBegin
                 || dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDatePlanEnd
-                || dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDateActualEnd)
+                || dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strDateActualEnd
+                || dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strOutpostId)
             {
                 if (dgvMissions.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection == SortOrder.Ascending)
                 {
-                    dgvMissions.Sort(new RowComparer(SortOrder.Descending, e.ColumnIndex));
+                    if (dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strOutpostId)
+                        dgvMissions.Sort(new RowComparerForComboboxString(SortOrder.Descending, e.ColumnIndex));
+                    else
+                        dgvMissions.Sort(new RowComparerForDate(SortOrder.Descending, e.ColumnIndex));
                     dgvMissions.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
                 }
                 else
                 {
-                    dgvMissions.Sort(new RowComparer(SortOrder.Ascending, e.ColumnIndex));
+                    if (dgvMissions.Columns[e.ColumnIndex].Name == MyHelper.strOutpostId)
+                        dgvMissions.Sort(new RowComparerForComboboxString(SortOrder.Ascending, e.ColumnIndex));
+                    else
+                        dgvMissions.Sort(new RowComparerForDate(SortOrder.Ascending, e.ColumnIndex));
                     dgvMissions.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
                 }
             }
@@ -94,12 +102,12 @@ namespace DGVOutposts
             }
         }
 
-        private class RowComparer : System.Collections.IComparer
+        private class RowComparerForDate : System.Collections.IComparer
         {
             private static int sortOrderModifier = 1;
             private int columnIndex;
 
-            public RowComparer(SortOrder sortOrder, int columnIndex)
+            public RowComparerForDate(SortOrder sortOrder, int columnIndex)
             {
                 this.columnIndex = columnIndex;
                 if (sortOrder == SortOrder.Descending)
@@ -130,6 +138,37 @@ namespace DGVOutposts
                 {
                     CompareResult = -1;
                 }
+
+                return CompareResult * sortOrderModifier;
+            }
+        }
+
+        private class RowComparerForComboboxString : System.Collections.IComparer
+        {
+            private static int sortOrderModifier = 1;
+            private int columnIndex;
+
+            public RowComparerForComboboxString(SortOrder sortOrder, int columnIndex)
+            {
+                this.columnIndex = columnIndex;
+                if (sortOrder == SortOrder.Descending)
+                {
+                    sortOrderModifier = -1;
+                }
+                else if (sortOrder == SortOrder.Ascending)
+                {
+                    sortOrderModifier = 1;
+                }
+            }
+
+            public int Compare(object x, object y)
+            {
+                DataGridViewRow row1 = (DataGridViewRow)x;
+                DataGridViewRow row2 = (DataGridViewRow)y;
+
+                int CompareResult = System.String.Compare(
+                    row1.Cells[columnIndex].FormattedValue.ToString(),
+                    row2.Cells[columnIndex].FormattedValue.ToString());
 
                 return CompareResult * sortOrderModifier;
             }
