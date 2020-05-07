@@ -12,7 +12,6 @@ namespace DGVOutposts
     {
         private void InitializeDGVOutposts()
         {
-            //_comboBoxColumnOutpost.Clear();
             _comboBoxColumnOutpost.InitializeDataTableOutpost();
 
             dgvOutposts.CancelEdit();
@@ -65,34 +64,7 @@ namespace DGVOutposts
                                          (int)reader["outpost_id"]);
                 }
             }
-
-            //if (dgvMissions.Columns.Count > 1)
-            //{
-            //    List<object> newDataOutposts = _dtOutposts.AsEnumerable().Select(x => x["id"]).ToList();
-            //    for (int i = 0; i < dgvMissions.Rows.Count; i++)
-            //    {
-            //        if (dgvMissions["outpost_id", i].Value != null)
-            //        {
-            //            //if (!(newDataOutposts    .Contains(dgvMissions["outpost_id", i].Value)))
-            //            if (!(newDataOutposts.Contains(dgvMissions["outpost_id", i].Value)))
-            //            {
-            //                dgvMissions["outpost_id", i].Value = DBNull.Value;
-            //                dgvMissions["outpost_id", i].ErrorText = "Пустое значение!";
-            //            }
-            //        }
-            //    }
-            //}
         }
-
-        //private void dgvOutposts_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
-        //{
-        //    if (sender == null) return;
-        //    DataGridView dgv = null;
-        //    try { dgv = (DataGridView)sender; }
-        //    catch { return; }
-
-        //    oldCellValue = dgv[e.ColumnIndex, e.RowIndex].Value;
-        //}
 
         private void dgvOutposts_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
@@ -475,22 +447,18 @@ namespace DGVOutposts
 
         private void dgvOutposts_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (e.Row.Cells[MyHelper.strOutpostId].Value != null /*&& e.row.cells["id"].value != dbnull.value*/)
+            if (e.Row.Cells[MyHelper.strOutpostId].Value != null)
             {
                 try
                 {
                     var outpost_id = (int)e.Row.Cells[MyHelper.strOutpostId].Value;
-                    //DataGridViewCell cell;
-                    //for (int i = 0; i < dgvmissions.rows.count - 1; i++)
-                    //{
-                    //    cell = dgvmissions.rows[i].cells["outpost_id"];
-                    //    if (cell.Value != null && cell.value != dbnull.value && (int)cell.value == id)
-                    //    {
-                    //        MessageBox.Show("данный форпост связан с миссией! измените или удалите миссию!");
-                    //        e.Cancel = true;
-                    //        return;
-                    //    }
-                    //}
+                    if (dgvMissions.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[MyHelper.strOutpostId].Value)
+                                                                .FirstOrDefault(id => (int)id == outpost_id) != null)
+                    {
+                        MessageBox.Show("Данный форпост связан с миссией! Измените или удалите миссию!");
+                        e.Cancel = true;
+                        return;
+                    }
                     using (var sconn = new NpgsqlConnection(sConnStr))
                     {
                         sconn.Open();

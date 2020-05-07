@@ -100,9 +100,7 @@
             this.dgvOutposts.Name = "dgvOutposts";
             this.dgvOutposts.Size = new System.Drawing.Size(786, 394);
             this.dgvOutposts.TabIndex = 0;
-            this.dgvOutposts.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgv_CellBeginEdit);
             this.dgvOutposts.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOutposts_CellEndEdit);
-            this.dgvOutposts.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgv_CellParsing);
             this.dgvOutposts.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
             this.dgvOutposts.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvOutposts_RowValidating);
             this.dgvOutposts.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvOutposts_UserDeletingRow);
@@ -131,7 +129,6 @@
             this.dgvMissions.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMissions_CellBeginEdit);
             this.dgvMissions.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellEndEdit);
             this.dgvMissions.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMissions_CellMouseEnter);
-            this.dgvMissions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgv_CellParsing);
             this.dgvMissions.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
             this.dgvMissions.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvMissions_RowValidating);
             this.dgvMissions.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvMissions_UserDeletingRow);
