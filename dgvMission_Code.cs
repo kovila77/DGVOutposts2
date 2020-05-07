@@ -37,9 +37,6 @@ namespace DGVOutposts
 
             dgvMissions.Columns[MyHelper.strOutpostId].SortMode = DataGridViewColumnSortMode.Automatic;
 
-            //dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Automatic;
-            //dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Automatic;
-            //dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.NotSortable;
             dgvMissions.Columns[MyHelper.strDateBegin].SortMode = DataGridViewColumnSortMode.Programmatic;
             dgvMissions.Columns[MyHelper.strDatePlanEnd].SortMode = DataGridViewColumnSortMode.Programmatic;
             dgvMissions.Columns[MyHelper.strDateActualEnd].SortMode = DataGridViewColumnSortMode.Programmatic;
@@ -120,7 +117,6 @@ namespace DGVOutposts
                 DataGridViewRow row1 = (DataGridViewRow)x;
                 DataGridViewRow row2 = (DataGridViewRow)y;
 
-                // Try to sort based on the Last Name column.
                 int CompareResult = 0;
                 if (row1.Cells[columnIndex].Value != DBNull.Value && row1.Cells[columnIndex].Value != null && row2.Cells[columnIndex].Value != DBNull.Value && row2.Cells[columnIndex].Value != null)
                 {
@@ -151,68 +147,17 @@ namespace DGVOutposts
                 if (valuePlanEnd != null && valuePlanEnd != DBNull.Value && valueActual != null && valueActual != DBNull.Value)
                     ((CalendarCell)cell).MyMaxDate = ((DateTime)valuePlanEnd).Date > ((DateTime)valueActual).Date
                         ? ((DateTime)valueActual).Date : ((DateTime)valuePlanEnd).Date;
+
                 else if (valuePlanEnd != null && valuePlanEnd != DBNull.Value)
                     ((CalendarCell)cell).MyMaxDate = ((DateTime)valuePlanEnd).Date;
+
                 else if (valueActual != null && valueActual != DBNull.Value)
                     ((CalendarCell)cell).MyMaxDate = ((DateTime)valueActual).Date;
             }
-            else if ((cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd) && valueBegin != null && valueBegin != DBNull.Value)
+            else if (valueBegin != null && valueBegin != DBNull.Value && (cell.OwningColumn.Name == MyHelper.strDatePlanEnd || cell.OwningColumn.Name == MyHelper.strDateActualEnd))
             {
                 ((CalendarCell)cell).MyMinDate = ((DateTime)valueBegin).Date;
             }
-            //return;
-            //if (cell.OwningColumn.Name == MyHelper.strDateBegin && (valueBegin == null || valueBegin == DBNull.Value)
-            //    || cell.OwningColumn.Name == MyHelper.strDatePlanEnd && (valuePlanEnd == null || valuePlanEnd == DBNull.Value)
-            //    || cell.OwningColumn.Name == MyHelper.strDateActualEnd && (valueActual == null || valueActual == DBNull.Value))
-            //{
-            //    dgvMissions.NotifyCurrentCellDirty(true);
-            //    //dgvMissions.NotifyCurrentCellDirty(false);
-            //}
-        }
-
-        private void dgvMissions_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
-        {
-            //if (dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(String) && e.Value != null)
-            //{
-            //    var strValue = e.Value.ToString().RmvExtrSpaces();
-            //    if (string.IsNullOrEmpty(strValue))
-            //    {
-            //        dgvMissions.CancelEdit();
-            //    }
-            //    else
-            //    {
-            //        e.Value = strValue;
-            //        e.ParsingApplied = true;
-            //    }
-            //}
-            var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
-            var cellFormatedValue = e.Value.ToString().RmvExtrSpaces();
-            int t;
-            if (cellFormatedValue == "" && cell.OwningColumn.Name != MyHelper.strDateActualEnd)
-            {
-                dgvMissions.CancelEdit();
-                //e.ParsingApplied = false;
-                return;
-            }
-            else if (dgvMissions.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
-                && dgvMissions.Columns[e.ColumnIndex].ValueType == typeof(Int32)
-                && !int.TryParse(cellFormatedValue, out t))
-            {
-                dgvMissions.CancelEdit();
-                //cell.ErrorText = MyHelper.strUncorrectIntValueCell;
-                MessageBox.Show(MyHelper.strUncorrectIntValueCell);
-                //e.ParsingApplied = false;
-                return;
-            }
-            else
-            {
-                cell.ErrorText = "";
-            }
-        }
-
-        private void dgvMission_RowEmtpyCellChecking(DataGridViewCell cell, ref DataGridViewCellValidatingEventArgs e)
-        {
-
         }
 
         private void dgvMissions_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -232,7 +177,6 @@ namespace DGVOutposts
             var row = dgvMissions.Rows[e.RowIndex];
             if ((row.IsNewRow || !dgvMissions.IsCurrentRowDirty) && sender != contextMenuStripNULL)
                 return;
-
 
             // Проверка можно ли фиксировать строку
             var cellsWithPotentialErrors = new List<DataGridViewCell> {
@@ -269,7 +213,7 @@ namespace DGVOutposts
             //    row.ErrorText = MyHelper.strBadRow + " Дата окончания не может быть меньше даты начала!";
             //    return;
             //}
-            MessageBox.Show("Фиксация...");
+            //MessageBox.Show("Фиксация...");
             try
             {
                 using (var sConn = new NpgsqlConnection(sConnStr))
@@ -328,7 +272,6 @@ namespace DGVOutposts
                         RETURNING mission_id;";
                         row.Cells[MyHelper.strMissionId].Value = sCommand.ExecuteScalar();
                     }
-                    //dgvMissions.NotifyCurrentCellDirty(false);
                 }
             }
             catch (Exception err)
@@ -337,71 +280,14 @@ namespace DGVOutposts
             }
         }
 
-        private void dgvMissions_RowValidated(object sender, DataGridViewCellEventArgs e)
-        {
-            if (!(dgvMissions.Rows[e.RowIndex].Tag is bool && (bool)dgvMissions.Rows[e.RowIndex].Tag) || dgvMissions.CurrentRow.ErrorText != "")
-            {
-                return;
-            }
-            var row = dgvMissions.Rows[e.RowIndex];
-
-            using (var sConn = new NpgsqlConnection(sConnStr))
-            {
-                sConn.Open();
-                var sCommand = new NpgsqlCommand
-                {
-                    Connection = sConn
-                };
-                sCommand.Parameters.AddWithValue("description", row.Cells["description"].Value);
-                sCommand.Parameters.AddWithValue("outpost_id", row.Cells["outpost_id"].Value);
-                sCommand.Parameters.AddWithValue("date_begin", row.Cells["date_begin"].Value);
-                sCommand.Parameters.AddWithValue("date_plan_end", row.Cells["date_plan_end"].Value);
-                sCommand.Parameters.AddWithValue("date_actual_end", row.Cells["date_actual_end"].Value is null ? DBNull.Value : row.Cells["date_actual_end"].Value);
-
-                if (row.Cells["id"].Value is int)
-                {
-                    sCommand.CommandText = @"
-                        UPDATE outpost_missions
-                        SET outpost_id          = @outpost_id,
-                            mission_description = @description,
-                            date_begin          = @date_begin,
-                            date_plan_end       = @date_plan_end,
-                            date_actual_end     = @date_actual_end
-                        WHERE mission_id        = @id;";
-                    sCommand.Parameters.AddWithValue("id", (int)row.Cells["id"].Value);
-                    var res = sCommand.ExecuteScalar();
-                }
-                else
-                {
-                    sCommand.CommandText = @"
-                        INSERT INTO outpost_missions (outpost_id,
-                                                      mission_description,
-                                                      date_begin,
-                                                      date_plan_end,
-                                                      date_actual_end)
-                        VALUES (@outpost_id,
-                                @description,
-                                @date_begin,
-                                @date_plan_end,
-                                @date_actual_end)
-                        RETURNING mission_id;";
-                    row.Cells["id"].Value = sCommand.ExecuteScalar();
-                }
-            }
-            row.Tag = false;
-        }
-
-        private void dgvMissions_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            //if (e.ColumnIndex == dgvMissions.Columns["outpost_id"].Index)
-            //{
-            if (e.Context.ToString().Contains(DataGridViewDataErrorContexts.Display.ToString()))
-            {
-                var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
-                cell.Value = null;
-            }
-            //}
-        }
+        //private void dgvMissions_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        //{
+        //    if (e.Context.ToString().Contains(DataGridViewDataErrorContexts.Display.ToString()))
+        //    {
+        //        var cell = dgvMissions[e.ColumnIndex, e.RowIndex];
+        //        cell.Value = null;
+        //    }
+        //}
 
         private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -412,8 +298,6 @@ namespace DGVOutposts
         private void setNULLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dgvMissions[mouseLocation.ColumnIndex, mouseLocation.RowIndex].Value = DBNull.Value;
-            //dgvMissions.NotifyCurrentCellDirty(true);
-            //dgvMissions.NotifyCurrentCellDirty(false);
             dgvMissions_RowValidating(contextMenuStripNULL, new DataGridViewCellCancelEventArgs(mouseLocation.ColumnIndex, mouseLocation.RowIndex));
         }
 
