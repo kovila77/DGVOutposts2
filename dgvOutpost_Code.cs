@@ -380,15 +380,38 @@ namespace DGVOutposts
                 using (var sConn = new NpgsqlConnection(sConnStr))
                 {
                     sConn.Open();
+                    //var outpost_name = row.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces();
+                    //var outpost_economic_value = (int)row.Cells[MyHelper.strOutpostEconomicValue].Value;
+                    //var outpost_coordinate_x = (int)row.Cells[MyHelper.strOutpostCoordinateX].Value;
+                    //var outpost_coordinate_y = (int)row.Cells[MyHelper.strOutpostCoordinateY].Value;
+                    //var outpost_coordinate_z = (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value;
+
+                    // Проверка на уникальность без учёта регистра
                     var sCommand = new NpgsqlCommand
                     {
-                        Connection = sConn
+                        Connection = sConn,
+                        CommandText = @"SELECT 1
+                                        FROM outposts
+                                        WHERE lower(outpost_name) = lower(@outpost_name)
+                                          AND outpost_coordinate_x = @outpost_coordinate_x
+                                          AND outpost_coordinate_y = @outpost_coordinate_y
+                                          AND outpost_coordinate_z = @outpost_coordinate_z
+                                          AND outpost_id IS DISTINCT FROM @outpost_id;"
                     };
-                    sCommand.Parameters.AddWithValue("outpost_name", row.Cells[MyHelper.strOutpostName].Value.ToString());
+                    sCommand.Parameters.AddWithValue("outpost_id", row.Cells[MyHelper.strOutpostId].Value == null ? DBNull.Value : row.Cells[MyHelper.strOutpostId].Value);
+                    sCommand.Parameters.AddWithValue("outpost_name", row.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces());
                     sCommand.Parameters.AddWithValue("outpost_economic_value", (int)row.Cells[MyHelper.strOutpostEconomicValue].Value);
                     sCommand.Parameters.AddWithValue("outpost_coordinate_x", (int)row.Cells[MyHelper.strOutpostCoordinateX].Value);
                     sCommand.Parameters.AddWithValue("outpost_coordinate_y", (int)row.Cells[MyHelper.strOutpostCoordinateY].Value);
                     sCommand.Parameters.AddWithValue("outpost_coordinate_z", (int)row.Cells[MyHelper.strOutpostCoordinateZ].Value);
+                    if (sCommand.ExecuteScalar() != null)
+                    {
+                        string eo = $"Форпост {row.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)row.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)row.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)row.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
+                        MessageBox.Show(eo);
+                        row.ErrorText = MyHelper.strBadRow + " " + eo;
+                        return;
+                    }
+
                     if (row.Cells[MyHelper.strOutpostId].FormattedValue.ToString().Trim().Length > 0)
                     {
                         sCommand.CommandText = @"
@@ -399,7 +422,6 @@ namespace DGVOutposts
                                 outpost_coordinate_y   = @outpost_coordinate_y,
                                 outpost_coordinate_z   = @outpost_coordinate_z
                             WHERE outpost_id = @outpost_id;";
-                        sCommand.Parameters.AddWithValue("outpost_id", (int)row.Cells[MyHelper.strOutpostId].Value);
                         sCommand.ExecuteNonQuery();
                         _comboBoxColumnOutpost.Change((int)row.Cells[MyHelper.strOutpostId].Value,
                                                     row.Cells[MyHelper.strOutpostName].Value.ToString(),
@@ -433,31 +455,10 @@ namespace DGVOutposts
                     }
                 }
             }
-            catch (PostgresException err)
-            {
-                if (err.ConstraintName == MyHelper.strUniqueOutpostConstraintName)
-                {
-                    string eo = $"Форпост {row.Cells[MyHelper.strOutpostName].Value.ToString().RmvExtrSpaces()} с координатами {(int)row.Cells[MyHelper.strOutpostCoordinateX].Value};{(int)row.Cells[MyHelper.strOutpostCoordinateY].Value};{(int)row.Cells[MyHelper.strOutpostCoordinateZ].Value} уже существует!";
-                    MessageBox.Show(eo);
-                    row.ErrorText = MyHelper.strBadRow + " " + eo;
-                }
-                else
-                {
-                    throw err;
-                }
-            }
             catch (Exception err2)
             {
                 MessageBox.Show(err2.Message);
             }
-        }
-
-        private void dgvOutposts_RowValidated(object sender, DataGridViewCellEventArgs e)
-        {
-            //if (MyHelper.IsEntireRowEmpty(dgvOutposts.Rows[e.RowIndex]))
-            //{
-            //    dgvOutposts.Rows.Remove(dgvOutposts.Rows[e.RowIndex]);
-            //}
         }
 
         private void dgvOutposts_DataError(object sender, DataGridViewDataErrorEventArgs e)
