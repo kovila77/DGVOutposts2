@@ -42,7 +42,7 @@ namespace DGVOutposts
 
         public void Change(int outpost_id, string outpost_name, int outpost_coordinate_x, int outpost_coordinate_y, int outpost_coordinate_z)
         {
-            DataRow forChange = _dtOutposts.AsEnumerable().SingleOrDefault(row => row.Field<int>("outpost_id") == outpost_id);
+            DataRow forChange = _dtOutposts.AsEnumerable().SingleOrDefault(row => row.Field<int>(MyHelper.strOutpostId) == outpost_id);
             if (forChange != null)
             {
                 forChange[MyHelper.strOutpostName] = outpost_name + " — "
@@ -54,7 +54,7 @@ namespace DGVOutposts
 
         public void Remove(int outpost_id)
         {
-            DataRow forDel = _dtOutposts.AsEnumerable().SingleOrDefault(row => row.Field<int>("outpost_id") == outpost_id);
+            DataRow forDel = _dtOutposts.AsEnumerable().SingleOrDefault(row => row.Field<int>(MyHelper.strOutpostId) == outpost_id);
             if (forDel != null)
             {
                 _dtOutposts.Rows.Remove(forDel);
