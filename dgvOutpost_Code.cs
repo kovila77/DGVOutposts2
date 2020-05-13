@@ -48,20 +48,22 @@ namespace DGVOutposts
                                             outpost_coordinate_z
                                     FROM outposts order by outpost_name; "
                 };
-                var reader = sCommand.ExecuteReader();
-                while (reader.Read())
+                using (var reader = sCommand.ExecuteReader())
                 {
-                    _comboBoxColumnOutpost.Add((int)reader["outpost_id"],
-                                               (string)reader["outpost_name"],
-                                               (int)reader["outpost_coordinate_x"],
-                                               (int)reader["outpost_coordinate_y"],
-                                               (int)reader["outpost_coordinate_z"]);
-                    dgvOutposts.Rows.Add((string)reader["outpost_name"],
-                                         (int)reader["outpost_economic_value"],
-                                         (int)reader["outpost_coordinate_x"],
-                                         (int)reader["outpost_coordinate_y"],
-                                         (int)reader["outpost_coordinate_z"],
-                                         (int)reader["outpost_id"]);
+                    while (reader.Read())
+                    {
+                        _comboBoxColumnOutpost.Add((int)reader["outpost_id"],
+                                                   (string)reader["outpost_name"],
+                                                   (int)reader["outpost_coordinate_x"],
+                                                   (int)reader["outpost_coordinate_y"],
+                                                   (int)reader["outpost_coordinate_z"]);
+                        dgvOutposts.Rows.Add((string)reader["outpost_name"],
+                                             (int)reader["outpost_economic_value"],
+                                             (int)reader["outpost_coordinate_x"],
+                                             (int)reader["outpost_coordinate_y"],
+                                             (int)reader["outpost_coordinate_z"],
+                                             (int)reader["outpost_id"]);
+                    }
                 }
             }
         }
@@ -193,9 +195,9 @@ namespace DGVOutposts
                     }
                 }
             }
-            catch (Exception err2)
+            catch (Exception err)
             {
-                MessageBox.Show(err2.Message);
+                MessageBox.Show(err.Message);
             }
         }
 

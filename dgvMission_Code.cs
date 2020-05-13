@@ -57,15 +57,17 @@ namespace DGVOutposts
                                            date_actual_end
                                     FROM outpost_missions order by outpost_id; "
                 };
-                var reader = sCommand.ExecuteReader();
-                while (reader.Read())
+                using (var reader = sCommand.ExecuteReader())
                 {
-                    dgvMissions.Rows.Add((string)reader["mission_description"],
-                                         (int)reader["mission_id"],
-                                         (int)reader["outpost_id"],
-                                         reader["date_begin"],
-                                         reader["date_plan_end"],
-                                         reader["date_actual_end"]);
+                    while (reader.Read())
+                    {
+                        dgvMissions.Rows.Add((string)reader["mission_description"],
+                                             (int)reader["mission_id"],
+                                             (int)reader["outpost_id"],
+                                             reader["date_begin"],
+                                             reader["date_plan_end"],
+                                             reader["date_actual_end"]);
+                    }
                 }
             }
         }

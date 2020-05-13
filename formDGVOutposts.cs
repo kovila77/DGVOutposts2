@@ -14,6 +14,7 @@ namespace DGVOutposts
         private DataGridViewComboBoxColumnOutpost _comboBoxColumnOutpost = new DataGridViewComboBoxColumnOutpost();
         private int currentTab = 0;
 
+        private delegate void InitializeDGV();
 
         private readonly string sConnStr = new NpgsqlConnectionStringBuilder
         {
@@ -29,8 +30,9 @@ namespace DGVOutposts
             InitializeComponent();
             InitializeDGVOutposts();
             InitializeDGVMissions();
-            tabControl1.TabPages[0].Tag = dgvOutposts;
-            tabControl1.TabPages[1].Tag = dgvMissions;
+            tabControl1.TabPages[0].Tag = new InitializeDGV(InitializeDGVOutposts);
+            tabControl1.TabPages[1].Tag = new InitializeDGV(InitializeDGVMissions);
+
         }
 
         //private void OffColumnSortingDGV(DataGridView dgv) { foreach (DataGridViewColumn column in dgv.Columns) column.SortMode = DataGridViewColumnSortMode.NotSortable; }
@@ -38,18 +40,20 @@ namespace DGVOutposts
 
         private void ReloadDGVToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            switch (tabControl1.SelectedIndex)
-            {
-                case 0:
-                    InitializeDGVOutposts();
-                    break;
-                case 1:
-                    InitializeDGVMissions();
-                    break;
-                default:
-                    break;
-            }
+            //switch (tabControl1.SelectedIndex)
+            //{
+            //    case 0:
+            //        InitializeDGVOutposts();
+            //        break;
+            //    case 1:
+            //        InitializeDGVMissions();
+            //        break;
+            //    default:
+            //        break;
+            //}
+            ((InitializeDGV)tabControl1.TabPages[currentTab].Tag).Invoke();
         }
+
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
             //switch (currentTab)
